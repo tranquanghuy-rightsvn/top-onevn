@@ -185,6 +185,47 @@ function initNav() {
   });
 }
 
+function initServiceCarousel() {
+  const track = document.getElementById("serviceGrid");
+  const prev = document.querySelector(".carousel-nav--prev");
+  const next = document.querySelector(".carousel-nav--next");
+  if (!track || !prev || !next) return;
+
+  let index = 0;
+
+  function visibleCount() {
+    const w = window.innerWidth;
+    if (w <= 560) return 1;
+    if (w <= 1080) return 2;
+    return 4;
+  }
+
+  function maxIndex() {
+    return Math.max(0, track.children.length - visibleCount());
+  }
+
+  function render() {
+    index = Math.min(index, maxIndex());
+    const card = track.querySelector(".service-card");
+    const gap = parseFloat(getComputedStyle(track).columnGap) || 20;
+    const step = card ? card.getBoundingClientRect().width + gap : 0;
+    track.style.transform = "translateX(" + -index * step + "px)";
+    prev.disabled = index <= 0;
+    next.disabled = index >= maxIndex();
+  }
+
+  prev.addEventListener("click", function () {
+    index = Math.max(0, index - 1);
+    render();
+  });
+  next.addEventListener("click", function () {
+    index = Math.min(maxIndex(), index + 1);
+    render();
+  });
+  window.addEventListener("resize", render);
+  render();
+}
+
 function initStickyHeader() {
   const header = document.getElementById("siteHeader");
   if (!header) return;
@@ -231,6 +272,7 @@ document.addEventListener("DOMContentLoaded", function () {
   renderServices();
   renderReasons();
   renderSteps();
+  initServiceCarousel();
   initNav();
   initStickyHeader();
   initReveal();

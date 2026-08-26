@@ -1,0 +1,50 @@
+<svg viewBox="0 0 1440 160" width="100%" height="auto" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradient dải viền cam trên -->
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ea580c"/>
+      <stop offset="35%" stop-color="#f97316"/>
+      <stop offset="65%" stop-color="#fb923c"/>
+      <stop offset="100%" stop-color="#fdba74"/>
+    </linearGradient>
+
+    <!-- Gradient lớp sóng xanh chính -->
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#071b4e"/>
+      <stop offset="50%" stop-color="#0b2c78"/>
+      <stop offset="85%" stop-color="#031b54"/>
+      <stop offset="100%" stop-color="#010e2f"/>
+    </linearGradient>
+
+    <!-- Gradient vệt sáng xanh bóng bẩy (glow) phía đuôi phải -->
+    <linearGradient id="cyanGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0066ff" stop-opacity="0"/>
+      <stop offset="60%" stop-color="#00aaff" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#00f0ff" stop-opacity="0.95"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Lớp 1: Dải viền cam/vàng trên cùng -->
+  <path d="M 0,20 
+           C 250,90 600,105 1050,45 
+           C 1200,25 1350,60 1440,110 
+           L 1440,118 
+           C 1350,68 1200,33 1050,53 
+           C 600,113 250,98 0,28 Z" 
+        fill="url(#orangeGrad)"/>
+
+  <!-- Lớp 2: Khối sóng xanh đậm chính -->
+  <path d="M 0,25 
+           C 250,95 600,110 1050,50 
+           C 1200,30 1350,65 1440,115 
+           L 1440,160 
+           L 0,160 Z" 
+        fill="url(#blueGrad)"/>
+
+  <!-- Lớp 3: Vệt sáng xanh phản chiếu (Highlight Glow) -->
+  <path d="M 750,95 
+           C 1050,50 1200,30 1440,115 
+           L 1440,126 
+           C 1200,41 1050,61 750,106 Z" 
+        fill="url(#cyanGlow)"/>
+</svg>
