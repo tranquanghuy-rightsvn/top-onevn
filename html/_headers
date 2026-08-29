@@ -1,0 +1,14 @@
+# Ảnh/font: đổi rất ít, cache 1 năm.
+# LƯU Ý: khi thay ảnh phải ĐỔI TÊN FILE, nếu không trình duyệt cũ vẫn dùng bản cache.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML/CSS/JS: luôn kiểm tra lại với server (304 rất nhẹ), tránh khách thấy bản cũ.
+/*.html
+  Cache-Control: public, no-cache
+/js/*
+  Cache-Control: public, no-cache
+/styles/*
+  Cache-Control: public, no-cache
+/
+  Cache-Control: public, no-cache
