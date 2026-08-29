@@ -366,6 +366,6 @@ ${footer()}
 
 module.exports = {
   SITE, SERVICES, esc, layout, crumbLd,
-  headerNav, footerHtml: footer, headHtml,
+  headerNav, header, footerHtml: footer, headHtml,
   ORG_LD, WEBSITE_LD, BUSINESS_LD, GEO,
 };

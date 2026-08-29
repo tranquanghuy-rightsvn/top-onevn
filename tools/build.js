@@ -967,17 +967,19 @@ if (fail) {
 /* ---------------- Đồng bộ nav + footer của trang chủ ----------------
    index.html là trang viết tay, nhưng nav và footer phải khớp với các
    trang con, nên build.js thay thẳng hai khối đó. */
-const { headerNav, footerHtml, headHtml } = require("./layout");
+const { header, footerHtml, headHtml } = require("./layout");
 const idxPath = path.join(ROOT, "index.html");
 let idx = fs.readFileSync(idxPath, "utf8");
 
-const navRe = /<nav class="main-nav" id="mainNav">[\s\S]*?<\/nav>/;
+/* Đồng bộ CẢ thẻ <header> (không chỉ <nav>) để logo, nút hamburger và nút
+   hotline của trang chủ không lệch với các trang con. */
+const headerRe = /<header class="site-header" id="siteHeader">[\s\S]*?<\/header>/;
 /* Khớp cả <footer> LẪN (một hoặc nhiều) div.copyright phía sau, vì footerHtml()
    sinh ra cả hai. Nếu chỉ khớp tới </footer> thì mỗi lần build lại chèn thêm
    một div.copyright nữa. Dấu + cũng tự dọn các bản đã bị nhân lên trước đó. */
 const footRe =
   /<footer class="site-footer">[\s\S]*?<\/footer>(?:\s*<div class="copyright">[\s\S]*?<\/div>)+/;
-if (!navRe.test(idx)) throw new Error("index.html: không tìm thấy khối nav");
+if (!headerRe.test(idx)) throw new Error("index.html: không tìm thấy khối header");
 if (!footRe.test(idx)) throw new Error("index.html: không tìm thấy khối footer");
 
 /* Thẻ <head> của trang chủ cũng sinh từ layout.js để thẻ meta/JSON-LD
@@ -1013,10 +1015,10 @@ idx = idx.replace(headRe, homeHead);
 idx = fillContainer(idx, "serviceGrid", homeServicesHtml(), "services");
 idx = fillContainer(idx, "whyGrid", homeReasonsHtml(), "reasons");
 idx = fillContainer(idx, "processGrid", homeStepsHtml(), "steps");
-idx = idx.replace(navRe, headerNav("home").trim());
+idx = idx.replace(headerRe, header("home").trim());
 idx = idx.replace(footRe, footerHtml().trim());
 fs.writeFileSync(idxPath, idx);
-console.log("\nindex.html: đã đồng bộ nav + footer + 3 khối nội dung");
+console.log("\nindex.html: đã đồng bộ header + footer + 3 khối nội dung");
 
 /* Cảnh báo độ dài thẻ SEO: Google thường cắt title ~60 ký tự,
    description ~160 ký tự. */
