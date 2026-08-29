@@ -88,7 +88,7 @@ function servicePage(s) {
     .slice(0, 3)
     .map(
       (x) => `            <a class="mini-card" href="/dich-vu/${x.slug}/">
-              <img src="${img(x.img)}" alt="${esc(x.title)}" width="700" height="352" loading="lazy" decoding="async" />
+              <img src="${img(x.img)}" alt="${esc(x.title)}" width="1200" height="800" loading="lazy" decoding="async" />
               <span>${x.title}</span>
             </a>`
     )
@@ -141,7 +141,7 @@ function servicePage(s) {
         </header>
 
         <figure class="prose-figure">
-          <img src="${img(s.img)}" alt="${esc(s.h1)}" width="1400" height="744"
+          <img src="${img(s.img)}" alt="${esc(s.h1)}" width="1200" height="800"
             fetchpriority="high" decoding="async" />
           <figcaption>${s.title} — Top One VN, Nha Trang</figcaption>
         </figure>
@@ -169,7 +169,7 @@ function servicesIndex() {
   const cards = ALL_SERVICES.map(
     (s) => `          <a class="svc-card" href="/dich-vu/${s.slug}/">
             <div class="svc-card-img">
-              <img src="${img(s.img)}" alt="${esc(s.title)}" width="700" height="352"
+              <img src="${img(s.img)}" alt="${esc(s.title)}" width="1200" height="800"
                 loading="lazy" decoding="async" />
             </div>
             <div class="svc-card-body">
@@ -237,7 +237,7 @@ function newsIndex() {
   const cards = NEWS.map(
     (n) => `          <article class="news-card">
             <a class="news-thumb" href="/tin-tuc/${n.slug}/">
-              <img src="${img(n.img)}" alt="${esc(n.title)}" width="700" height="352"
+              <img src="${img(n.img)}" alt="${esc(n.title)}" width="1200" height="800"
                 loading="lazy" decoding="async" />
             </a>
             <div class="news-body">
@@ -306,7 +306,7 @@ function newsPage(n) {
     .slice(0, 3)
     .map(
       (x) => `            <a class="mini-card" href="/tin-tuc/${x.slug}/">
-              <img src="${img(x.img)}" alt="${esc(x.title)}" width="700" height="352" loading="lazy" decoding="async" />
+              <img src="${img(x.img)}" alt="${esc(x.title)}" width="1200" height="800" loading="lazy" decoding="async" />
               <span>${x.title}</span>
             </a>`
     )
@@ -350,7 +350,7 @@ function newsPage(n) {
     ],
     body: `      <article class="prose-page">
         <figure class="prose-figure prose-figure--top">
-          <img src="${img(n.img)}" alt="${esc(n.title)}" width="1400" height="744"
+          <img src="${img(n.img)}" alt="${esc(n.title)}" width="1200" height="800"
             fetchpriority="high" decoding="async" />
         </figure>
 

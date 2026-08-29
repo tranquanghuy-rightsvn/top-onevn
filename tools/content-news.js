@@ -7,7 +7,7 @@ module.exports = [
     seoTitle: "Lịch tổng vệ sinh nhà đón Tết",
     date: "2026-08-24",
     dateText: "24/08/2026",
-    img: "hero-1",
+    img: "news-don-tet",
     excerpt:
       "Đợi tới 27–28 Tết mới gọi dịch vụ là lúc giá cao nhất và khó đặt được lịch nhất. Đây là cách chia nhỏ công việc trong bốn tuần để nhà sạch mà không kiệt sức.",
     body: [
@@ -32,7 +32,7 @@ module.exports = [
     seoTitle: "Cách chọn đơn vị vệ sinh uy tín",
     date: "2026-08-12",
     dateText: "12/08/2026",
-    img: "hero-2",
+    img: "news-chon-dich-vu",
     excerpt:
       "Giá rẻ bất thường, không khảo sát mà vẫn báo giá chắc nịch, nhân viên không đồng phục — những tín hiệu nên cân nhắc trước khi giao nhà cho ai đó.",
     body: [
@@ -57,7 +57,7 @@ module.exports = [
     title: "Chống ẩm mốc mùa mưa cho nhà ở Nha Trang",
     date: "2026-07-28",
     dateText: "28/07/2026",
-    img: "hero-3",
+    img: "news-am-moc",
     excerpt:
       "Độ ẩm cao và hơi muối biển khiến nhà ở Nha Trang xuống cấp nhanh hơn nơi khác. Vài biện pháp đơn giản giúp hạn chế nấm mốc và mùi hôi trong mùa mưa.",
     body: [
@@ -80,7 +80,7 @@ module.exports = [
     title: "Bao lâu nên giặt nệm và sofa một lần?",
     date: "2026-07-05",
     dateText: "05/07/2026",
-    img: "hero",
+    img: "news-nem-sofa",
     excerpt:
       "Nệm là món đồ tiếp xúc với cơ thể tám tiếng mỗi đêm nhưng hiếm khi được làm sạch. Tần suất hợp lý và những dấu hiệu cho thấy đã tới lúc.",
     body: [

@@ -7,7 +7,7 @@ module.exports = [
     h1: "Dịch vụ giúp việc gia đình tại Nha Trang",
     description:
       "Giúp việc gia đình theo giờ, theo ngày hoặc ở lại tại Nha Trang. Lý lịch rõ ràng, được đào tạo, công ty bảo lãnh và thay người khi cần.",
-    img: "hero-4",
+    img: "svc-giup-viec",
     lead: "Tìm được người giúp việc tin cậy khó hơn nhiều so với việc trả lương cho họ. Nỗi lo lớn nhất của các gia đình không phải chi phí, mà là giao nhà cho một người lạ — rồi người đó nghỉ ngang giữa chừng. Top One VN đứng ra làm bên chịu trách nhiệm: người giúp việc do công ty tuyển chọn, đào tạo, bảo lãnh và thay thế khi cần.",
     sections: [
       {
@@ -104,7 +104,7 @@ module.exports = [
     h1: "Giặt nệm, sofa, thảm tại Nha Trang",
     description:
       "Giặt nệm, sofa, thảm, rèm tại nhà ở Nha Trang. Máy giặt hút chuyên dụng, diệt khuẩn và mạt bụi, khử mùi, khô nhanh trong 4–6 giờ. Hotline 0979 726 873.",
-    img: "hero",
+    img: "svc-nem-sofa",
     lead: "Nệm và sofa là hai món đồ bẩn nhất trong nhà mà hầu như không ai làm sạch. Mồ hôi, tế bào da chết và độ ẩm tạo môi trường lý tưởng cho mạt bụi — tác nhân hàng đầu gây viêm mũi dị ứng, hen suyễn và những cơn ngứa không rõ nguyên nhân. Khí hậu biển ẩm ở Nha Trang càng khiến vấn đề này nghiêm trọng hơn.",
     sections: [
       {
@@ -222,7 +222,7 @@ module.exports = [
     h1: "Đánh bóng sàn và mặt đá tự nhiên tại Nha Trang",
     description:
       "Dịch vụ mài, đánh bóng, phục hồi sàn đá granite, marble, terrazzo và mặt đá bếp tại Nha Trang. Trả lại độ bóng gương cho sảnh khách sạn, quầy bar, showroom.",
-    img: "hero-1",
+    img: "svc-san-da",
     lead: "Sàn đá marble ở sảnh khách sạn sau vài năm sẽ mờ đi, xuất hiện vệt xước chân chim và ố vàng ở lối đi chính. Nhiều chủ đầu tư nghĩ phải thay mới, trong khi thực tế chỉ cần mài và đánh bóng lại là đá trở về gần như nguyên bản — với chi phí bằng một phần nhỏ so với lát lại.",
     sections: [
       {

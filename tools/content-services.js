@@ -8,7 +8,7 @@ module.exports = [
     h1: "Dịch vụ vệ sinh nhà ở tại Nha Trang",
     description:
       "Vệ sinh nhà ở trọn gói tại Nha Trang. Nhân viên được đào tạo, hoá chất an toàn cho trẻ nhỏ, báo giá minh bạch. Hotline 0979 726 873.",
-    img: "hero-1",
+    img: "svc-nha-o",
     lead: "Nhà sạch không chỉ là chuyện thẩm mỹ. Bụi mịn tích trong rèm cửa, nấm mốc sau tủ lạnh, vi khuẩn trên tay nắm cửa — tất cả đều âm thầm ảnh hưởng tới hô hấp và giấc ngủ của cả gia đình. Top One VN nhận vệ sinh nhà ở trọn gói tại Nha Trang và các khu vực lân cận trong tỉnh Khánh Hoà, làm sạch tới những chỗ mà việc dọn dẹp hằng ngày thường bỏ qua.",
     sections: [
       {
@@ -114,7 +114,7 @@ module.exports = [
     h1: "Dịch vụ vệ sinh văn phòng tại Nha Trang",
     description:
       "Vệ sinh văn phòng theo ca cố định tại Nha Trang. Làm ngoài giờ không ảnh hưởng công việc, có hợp đồng và hoá đơn VAT đầy đủ.",
-    img: "hero-2",
+    img: "svc-van-phong",
     lead: "Một văn phòng sạch không chỉ để tiếp khách cho đẹp. Bàn làm việc, bàn phím và tay nắm cửa là nơi vi khuẩn lây chéo nhanh nhất trong môi trường công sở — và mỗi đợt nhân viên nghỉ ốm đồng loạt đều tốn hơn nhiều so với chi phí thuê vệ sinh. Top One VN nhận vệ sinh văn phòng, showroom và mặt bằng kinh doanh tại Nha Trang theo ca cố định hoặc hợp đồng dài hạn.",
     sections: [
       {
@@ -211,7 +211,7 @@ module.exports = [
     h1: "Vệ sinh sau xây dựng tại Nha Trang",
     description:
       "Vệ sinh công trình sau xây dựng tại Nha Trang. Xử lý bụi xi măng, vết sơn, keo silicon bằng máy chuyên dụng, bàn giao sạch để ở ngay.",
-    img: "hero-3",
+    img: "svc-sau-xay-dung",
     lead: "Sau khi thợ rút đi, công trình nhìn thì xong nhưng chưa thể ở được. Bụi xi măng bám kín mọi bề mặt, vết sơn và keo silicon dính trên kính, ron gạch còn vữa thừa. Đây là loại vệ sinh nặng nhất, cần máy móc và hoá chất chuyên dụng chứ không thể xử lý bằng cách lau tay thông thường.",
     sections: [
       {

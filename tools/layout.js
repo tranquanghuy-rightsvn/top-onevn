@@ -12,12 +12,12 @@ const SITE = {
 
 /* Danh sách dịch vụ – dùng chung cho dropdown, trang /dich-vu/ và sitemap */
 const SERVICES = [
-  { slug: "ve-sinh-nha-o", title: "Vệ sinh nhà ở", short: "Dọn dẹp, lau chùi, sắp xếp gọn gàng", img: "hero-1" },
-  { slug: "ve-sinh-van-phong", title: "Vệ sinh văn phòng", short: "Sạch sẽ, chuyên nghiệp, hiệu quả", img: "hero-2" },
-  { slug: "ve-sinh-sau-xay-dung", title: "Vệ sinh sau xây dựng", short: "Làm sạch công trình, trả lại diện mạo mới", img: "hero-3" },
-  { slug: "giup-viec-gia-dinh", title: "Giúp việc gia đình", short: "Nấu ăn, dọn dẹp, chăm sóc gia đình", img: "hero-4" },
-  { slug: "giat-nem-sofa", title: "Giặt nệm sofa", short: "Giặt sạch, khử mùi và diệt khuẩn chuyên sâu", img: "hero" },
-  { slug: "lam-moi-san-da", title: "Làm mới sàn & mặt đá tự nhiên", short: "Đánh bóng sàn, mặt đá sảnh khách sạn, quầy bar", img: "hero-1" },
+  { slug: "ve-sinh-nha-o", title: "Vệ sinh nhà ở", short: "Dọn dẹp, lau chùi, sắp xếp gọn gàng", img: "svc-nha-o" },
+  { slug: "ve-sinh-van-phong", title: "Vệ sinh văn phòng", short: "Sạch sẽ, chuyên nghiệp, hiệu quả", img: "svc-van-phong" },
+  { slug: "ve-sinh-sau-xay-dung", title: "Vệ sinh sau xây dựng", short: "Làm sạch công trình, trả lại diện mạo mới", img: "svc-sau-xay-dung" },
+  { slug: "giup-viec-gia-dinh", title: "Giúp việc gia đình", short: "Nấu ăn, dọn dẹp, chăm sóc gia đình", img: "svc-giup-viec" },
+  { slug: "giat-nem-sofa", title: "Giặt nệm sofa", short: "Giặt sạch, khử mùi và diệt khuẩn chuyên sâu", img: "svc-nem-sofa" },
+  { slug: "lam-moi-san-da", title: "Làm mới sàn & mặt đá tự nhiên", short: "Đánh bóng sàn, mặt đá sảnh khách sạn, quầy bar", img: "svc-san-da" },
 ];
 
 const esc = (s) =>

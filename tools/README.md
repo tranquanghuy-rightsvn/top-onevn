@@ -44,3 +44,17 @@ Muốn nhận thẳng vào hộp thư, chọn một trong hai:
 - **Cloudflare Worker** — viết một route `POST /api/contact` gửi mail qua
   Email Routing hoặc Resend. Cần chuyển project từ static-assets thuần
   sang Worker có script.
+
+## Ảnh
+
+Ảnh cover của dịch vụ (`svc-*.webp`) và tin tức (`news-*.webp`) đều là
+**1200×800, tỉ lệ 3:2**, tải từ Unsplash (giấy phép cho dùng thương mại,
+không cần ghi nguồn). CSS dùng `aspect-ratio: 3 / 2` nên ảnh mới thay vào
+phải giữ đúng tỉ lệ này, nếu không sẽ bị `object-fit: cover` cắt bớt.
+
+Thay ảnh: đặt file mới vào `html/assets/images/` rồi đổi trường `img`
+trong `tools/layout.js` (mảng `SERVICES`) và file nội dung tương ứng.
+Nhớ **đổi tên file** thay vì ghi đè — `/assets/*` đang cache 1 năm.
+
+Riêng `hero.webp` (ảnh lớn trang chủ) giữ tỉ lệ khác vì nằm trong bố cục
+hero, không dùng khung 3:2.
