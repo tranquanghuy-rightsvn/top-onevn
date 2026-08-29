@@ -58,3 +58,9 @@ Nhớ **đổi tên file** thay vì ghi đè — `/assets/*` đang cache 1 năm.
 
 Riêng `hero.webp` (ảnh lớn trang chủ) giữ tỉ lệ khác vì nằm trong bố cục
 hero, không dùng khung 3:2.
+
+## Google Analytics
+
+Mã GA4 (`G-EP93RGYSQR`) đặt trong `headHtml()` ở `tools/layout.js` nên
+mọi trang đều có, kể cả `index.html` (build tự đồng bộ phần `<head>`).
+Đổi mã đo hoặc gỡ bỏ thì sửa đúng một chỗ đó rồi chạy lại build.

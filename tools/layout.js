@@ -328,7 +328,17 @@ ${o.preload ? `    <link rel="preload" as="image" href="${o.preload}" fetchprior
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/styles/style.css" />
-${ldTags}`;
+${ldTags}
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EP93RGYSQR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-EP93RGYSQR');
+    </script>`;
 }
 
 function layout(o) {
