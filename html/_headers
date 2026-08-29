@@ -1,9 +1,28 @@
-# Mặc định cho mọi trang HTML (gồm cả /dich-vu/, /tin-tuc/... là URL thư mục):
-# luôn kiểm tra lại với server, 304 rất nhẹ, tránh khách thấy bản cũ.
-/*
+# LƯU Ý: Cloudflare CỘNG DỒN mọi quy tắc khớp, không ưu tiên cái cụ thể hơn.
+# Vì vậy KHÔNG được dùng /* ở đây — nó sẽ chèn no-cache vào cả /assets/*.
+# Các đường dẫn dưới đây được liệt kê rõ để không chồng lấn nhau.
+
+# Trang HTML: luôn kiểm tra lại với server (304 rất nhẹ)
+/
+  Cache-Control: public, no-cache
+/*.html
+  Cache-Control: public, no-cache
+/dich-vu/*
+  Cache-Control: public, no-cache
+/tin-tuc/*
+  Cache-Control: public, no-cache
+/gioi-thieu/*
+  Cache-Control: public, no-cache
+/cong-tac-vien/*
+  Cache-Control: public, no-cache
+/lien-he/*
+  Cache-Control: public, no-cache
+/js/*
+  Cache-Control: public, no-cache
+/styles/*
   Cache-Control: public, no-cache
 
-# Ảnh/font đổi rất ít -> cache 1 năm. Quy tắc cụ thể hơn nên đặt sau.
-# LƯU Ý: khi thay ảnh phải ĐỔI TÊN FILE, nếu không trình duyệt cũ vẫn dùng bản cache.
+# Ảnh/font: cache 1 năm.
+# Khi thay ảnh phải ĐỔI TÊN FILE, nếu không trình duyệt cũ vẫn dùng bản cache.
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
