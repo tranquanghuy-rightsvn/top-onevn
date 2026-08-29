@@ -3,6 +3,8 @@
 module.exports = [
   {
     slug: "lich-tong-ve-sinh-nha-cua-don-tet",
+    cat: "meo-ve-sinh",
+    catName: "Mẹo vệ sinh",
     title: "Lịch tổng vệ sinh nhà cửa đón Tết: nên bắt đầu từ khi nào?",
     seoTitle: "Lịch tổng vệ sinh nhà đón Tết",
     date: "2026-08-24",
@@ -28,6 +30,8 @@ module.exports = [
   },
   {
     slug: "chon-dich-vu-ve-sinh-uy-tin",
+    cat: "chon-dich-vu",
+    catName: "Chọn dịch vụ",
     title: "Năm dấu hiệu nhận biết một đơn vị vệ sinh làm ăn tử tế",
     seoTitle: "Cách chọn đơn vị vệ sinh uy tín",
     date: "2026-08-12",
@@ -54,6 +58,8 @@ module.exports = [
   },
   {
     slug: "ve-sinh-nha-mua-mua-nha-trang",
+    cat: "meo-ve-sinh",
+    catName: "Mẹo vệ sinh",
     title: "Chống ẩm mốc mùa mưa cho nhà ở Nha Trang",
     date: "2026-07-28",
     dateText: "28/07/2026",
@@ -77,6 +83,8 @@ module.exports = [
   },
   {
     slug: "bao-duong-nem-sofa-dinh-ky",
+    cat: "bao-duong-noi-that",
+    catName: "Bảo dưỡng nội thất",
     title: "Bao lâu nên giặt nệm và sofa một lần?",
     date: "2026-07-05",
     dateText: "05/07/2026",

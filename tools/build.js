@@ -7,10 +7,30 @@ const path = require("path");
 const { SITE, SERVICES, esc, layout, crumbLd, BUSINESS_LD, GEO } = require("./layout");
 
 const ROOT = path.join(__dirname, "..", "html");
-const ALL_SERVICES = [
+/* Nội dung bài viết nằm ở content-services*.js, còn `short` (mô tả ngắn cho
+   dropdown + thẻ dịch vụ) nằm ở mảng SERVICES trong layout.js. Gộp hai nguồn
+   theo slug, và kiểm tra khớp để không lặp lại lỗi "undefined" trên /dich-vu/. */
+const SERVICE_CONTENT = [
   ...require("./content-services"),
   ...require("./content-services2"),
 ];
+
+const bySlug = new Map(SERVICES.map((x) => [x.slug, x]));
+const missing = [];
+const ALL_SERVICES = SERVICE_CONTENT.map((c) => {
+  const meta = bySlug.get(c.slug);
+  if (!meta) missing.push(`  content-services*.js có slug "${c.slug}" nhưng layout.js SERVICES thì không`);
+  else if (!meta.short) missing.push(`  "${c.slug}" thiếu trường short trong layout.js`);
+  return { ...c, short: meta ? meta.short : "" };
+});
+for (const m of SERVICES) {
+  if (!SERVICE_CONTENT.some((c) => c.slug === m.slug))
+    missing.push(`  layout.js SERVICES có slug "${m.slug}" nhưng không có bài viết tương ứng`);
+}
+if (missing.length) {
+  console.error("LỆCH DỮ LIỆU DỊCH VỤ:\n" + missing.join("\n"));
+  process.exit(1);
+}
 const NEWS = require("./content-news");
 
 const img = (n) => `/assets/images/${n}.webp`;
@@ -70,6 +90,61 @@ const ctaBox = `        <aside class="cta-box">
             <a class="btn-ghost" href="/lien-he/">Gửi yêu cầu</a>
           </div>
         </aside>`;
+
+/* ---------------- Sidebar cho trang bài viết ----------------
+   Dùng chung cho trang dịch vụ và trang tin tức. */
+const NEWS_CATS = (() => {
+  const m = new Map();
+  for (const n of NEWS) {
+    if (!m.has(n.cat)) m.set(n.cat, { slug: n.cat, name: n.catName, count: 0 });
+    m.get(n.cat).count++;
+  }
+  return [...m.values()];
+})();
+
+function sidebar(opts) {
+  const o = opts || {};
+  const cats = NEWS_CATS.map(
+    (c) => `            <li${c.slug === o.cat ? ' class="is-active"' : ""}>
+              <a href="/tin-tuc/danh-muc/${c.slug}/">${c.name}<span class="side-count">${c.count}</span></a>
+            </li>`
+  ).join("\n");
+
+  const svcs = ALL_SERVICES.map(
+    (x) => `            <li${x.slug === o.service ? ' class="is-active"' : ""}>
+              <a href="/dich-vu/${x.slug}/">${x.title}</a>
+            </li>`
+  ).join("\n");
+
+  return `        <aside class="sidebar">
+          <section class="side-box">
+            <h2 class="side-title">Chuyên mục bài viết</h2>
+            <ul class="side-list">
+${cats}
+              <li><a href="/tin-tuc/">Tất cả bài viết<span class="side-count">${NEWS.length}</span></a></li>
+            </ul>
+          </section>
+
+          <section class="side-box">
+            <h2 class="side-title">Dịch vụ của chúng tôi</h2>
+            <ul class="side-list side-list--svc">
+${svcs}
+            </ul>
+          </section>
+
+          <a class="side-cta" href="/cong-tac-vien/">
+            <span class="side-cta-img">
+              <img src="/assets/images/jobs-staff.webp" alt="Cộng tác viên Top One VN"
+                width="600" height="600" loading="lazy" decoding="async" />
+            </span>
+            <span class="side-cta-body">
+              <strong>Tuyển cộng tác viên</strong>
+              <small>Thu nhập 6–12 triệu/tháng, thời gian linh hoạt, được đào tạo miễn phí.</small>
+              <span class="side-cta-btn">Xem chi tiết ›</span>
+            </span>
+          </a>
+        </aside>`;
+}
 
 /* ---------------- Trang chi tiết dịch vụ ---------------- */
 function servicePage(s) {
@@ -134,11 +209,13 @@ function servicePage(s) {
         areaServed: { "@type": "City", name: "Nha Trang" },
       },
     ],
-    body: `      <article class="prose-page">
+    body: `      <div class="article-layout">
+      <article class="prose-page">
         <header class="prose-head">
           <h1>${s.h1}</h1>
-          <p class="prose-lead">${s.lead}</p>
         </header>
+
+        <p class="prose-lead">${s.lead}</p>
 
         <figure class="prose-figure">
           <img src="${img(s.img)}" alt="${esc(s.h1)}" width="1200" height="800"
@@ -160,7 +237,10 @@ ${ctaBox}
 ${others}
           </div>
         </section>
-      </article>`,
+      </article>
+
+${sidebar({ service: s.slug })}
+      </div>`,
   });
 }
 
@@ -348,20 +428,23 @@ function newsPage(n) {
         mainEntityOfPage: SITE.origin + `/tin-tuc/${n.slug}/`,
       },
     ],
-    body: `      <article class="prose-page">
+    body: `      <div class="article-layout">
+      <article class="prose-page">
+        <header class="prose-head">
+          <h1>${n.title}</h1>
+          <p class="news-meta news-meta--lg">
+            <a class="news-cat" href="/tin-tuc/danh-muc/${n.cat}/">${n.catName}</a>
+            ${calIcon}
+            <time datetime="${n.date}">${n.dateText}</time>
+          </p>
+        </header>
+
+        <p class="prose-lead">${n.excerpt}</p>
+
         <figure class="prose-figure prose-figure--top">
           <img src="${img(n.img)}" alt="${esc(n.title)}" width="1200" height="800"
             fetchpriority="high" decoding="async" />
         </figure>
-
-        <header class="prose-head">
-          <h1>${n.title}</h1>
-          <p class="news-meta news-meta--lg">
-            ${calIcon}
-            <time datetime="${n.date}">${n.dateText}</time>
-          </p>
-          <p class="prose-lead">${n.excerpt}</p>
-        </header>
 
         <div class="prose">
 ${body}
@@ -375,7 +458,81 @@ ${ctaBox}
 ${more}
           </div>
         </section>
-      </article>`,
+      </article>
+
+${sidebar({ cat: n.cat })}
+      </div>`,
+  });
+}
+
+/* ---------------- Trang chuyên mục tin tức ---------------- */
+function categoryPage(c) {
+  const posts = NEWS.filter((n) => n.cat === c.slug);
+  const cards = posts
+    .map(
+      (n) => `          <article class="news-card">
+            <a class="news-thumb" href="/tin-tuc/${n.slug}/">
+              <img src="${img(n.img)}" alt="${esc(n.title)}" width="1200" height="800"
+                loading="lazy" decoding="async" />
+            </a>
+            <div class="news-body">
+              <h2><a href="/tin-tuc/${n.slug}/">${n.title}</a></h2>
+              <p class="news-excerpt">${n.excerpt}</p>
+              <p class="news-meta">
+                ${calIcon}
+                <time datetime="${n.date}">${n.dateText}</time>
+              </p>
+            </div>
+          </article>`
+    )
+    .join("\n");
+
+  const trail = [
+    { name: "Trang chủ", url: "/" },
+    { name: "Tin tức", url: "/tin-tuc/" },
+    { name: c.name, url: `/tin-tuc/danh-muc/${c.slug}/` },
+  ];
+
+  return layout({
+    title: `${c.name} | Tin tức Top One VN`,
+    description: `Các bài viết thuộc chuyên mục ${c.name} của Top One VN — kinh nghiệm vệ sinh và chăm sóc nhà cửa tại Nha Trang.`,
+    path: `/tin-tuc/danh-muc/${c.slug}/`,
+    active: "tin-tuc",
+    crumbs: trail,
+    jsonld: [
+      crumbLd(trail),
+      {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        name: c.name,
+        url: SITE.origin + `/tin-tuc/danh-muc/${c.slug}/`,
+        isPartOf: { "@id": SITE.origin + "/#website" },
+        mainEntity: {
+          "@type": "ItemList",
+          numberOfItems: posts.length,
+          itemListElement: posts.map((n, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            name: n.title,
+            url: SITE.origin + `/tin-tuc/${n.slug}/`,
+          })),
+        },
+      },
+    ],
+    body: `      <section class="page-head">
+        <h1>${c.name}</h1>
+        <p>${posts.length} bài viết trong chuyên mục này.</p>
+      </section>
+
+      <div class="article-layout">
+        <div class="cat-main">
+          <div class="news-grid news-grid--cat">
+${cards}
+          </div>
+        </div>
+
+${sidebar({ cat: c.slug })}
+      </div>`,
   });
 }
 
@@ -675,6 +832,7 @@ ALL_SERVICES.forEach((s) => out.push(write(`dich-vu/${s.slug}`, servicePage(s)))
 out.push(write("gioi-thieu", aboutPage()));
 out.push(write("tin-tuc", newsIndex()));
 NEWS.forEach((n) => out.push(write(`tin-tuc/${n.slug}`, newsPage(n))));
+NEWS_CATS.forEach((c) => out.push(write(`tin-tuc/danh-muc/${c.slug}`, categoryPage(c))));
 out.push(write("cong-tac-vien", jobsPage()));
 out.push(write("lien-he", contactPage()));
 
@@ -690,6 +848,9 @@ const sitemapUrls = [
   })),
   { loc: "/gioi-thieu/", pri: "0.6", freq: "yearly", mod: today },
   { loc: "/tin-tuc/", pri: "0.7", freq: "weekly", mod: newestNews },
+  ...NEWS_CATS.map((c) => ({
+    loc: `/tin-tuc/danh-muc/${c.slug}/`, pri: "0.5", freq: "monthly", mod: newestNews,
+  })),
   ...NEWS.map((n) => ({
     loc: `/tin-tuc/${n.slug}/`, pri: "0.6", freq: "yearly", mod: n.date,
   })),

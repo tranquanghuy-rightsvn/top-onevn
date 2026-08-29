@@ -61,6 +61,24 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://toponevn.vn/tin-tuc/danh-muc/meo-ve-sinh/</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://toponevn.vn/tin-tuc/danh-muc/chon-dich-vu/</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://toponevn.vn/tin-tuc/danh-muc/bao-duong-noi-that/</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://toponevn.vn/tin-tuc/lich-tong-ve-sinh-nha-cua-don-tet/</loc>
     <lastmod>2026-08-24</lastmod>
     <changefreq>yearly</changefreq>
