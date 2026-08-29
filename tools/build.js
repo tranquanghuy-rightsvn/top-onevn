@@ -121,7 +121,6 @@ function sidebar(opts) {
             <h2 class="side-title">Chuyên mục bài viết</h2>
             <ul class="side-list">
 ${cats}
-              <li><a href="/tin-tuc/">Tất cả bài viết<span class="side-count">${NEWS.length}</span></a></li>
             </ul>
           </section>
 
@@ -132,7 +131,7 @@ ${svcs}
             </ul>
           </section>
 
-          <a class="side-cta" href="/cong-tac-vien/">
+${o.cta === false ? "" : `          <a class="side-cta" href="/cong-tac-vien/">
             <span class="side-cta-img">
               <img src="/assets/images/jobs-staff.webp" alt="Cộng tác viên Top One VN"
                 width="600" height="600" loading="lazy" decoding="async" />
@@ -142,7 +141,7 @@ ${svcs}
               <small>Thu nhập 6–12 triệu/tháng, thời gian linh hoạt, được đào tạo miễn phí.</small>
               <span class="side-cta-btn">Xem chi tiết ›</span>
             </span>
-          </a>
+          </a>`}
         </aside>`;
 }
 
@@ -563,11 +562,13 @@ function aboutPage() {
         about: { "@id": SITE.origin + "/#organization" },
       },
     ],
-    body: `      <article class="prose-page">
+    body: `      <div class="article-layout">
+      <article class="prose-page">
         <header class="prose-head">
           <h1>Về Top One VN Clean &amp; Care</h1>
-          <p class="prose-lead">Chúng tôi làm một việc duy nhất và cố gắng làm cho tốt: giữ cho không gian sống và làm việc của khách hàng tại Nha Trang luôn sạch sẽ, an toàn.</p>
         </header>
+
+        <p class="prose-lead">Chúng tôi làm một việc duy nhất và cố gắng làm cho tốt: giữ cho không gian sống và làm việc của khách hàng tại Nha Trang luôn sạch sẽ, an toàn.</p>
 
         <figure class="prose-figure">
           <img src="/assets/images/why-staff.webp" alt="Đội ngũ Top One VN"
@@ -594,7 +595,10 @@ function aboutPage() {
         </div>
 
 ${ctaBox}
-      </article>`,
+      </article>
+
+${sidebar({})}
+      </div>`,
   });
 }
 
@@ -650,16 +654,18 @@ function jobsPage() {
         directApply: false,
       },
     ],
-    body: `      <article class="prose-page">
-        <figure class="prose-figure prose-figure--top">
+    body: `      <div class="article-layout">
+      <article class="prose-page">
+        <header class="prose-head">
+          <h1>Tuyển cộng tác viên</h1>
+        </header>
+
+        <p class="prose-lead">Gia nhập đội ngũ Top One VN — thu nhập ổn định, thời gian linh hoạt, được đào tạo bài bản và luôn có người hỗ trợ khi gặp khó khăn trong công việc.</p>
+
+        <figure class="prose-figure prose-figure--jobs">
           <img src="/assets/images/jobs-staff.webp" alt="Cộng tác viên Top One VN"
             width="600" height="600" fetchpriority="high" decoding="async" />
         </figure>
-
-        <header class="prose-head">
-          <h1>Tuyển cộng tác viên</h1>
-          <p class="prose-lead">Gia nhập đội ngũ Top One VN — thu nhập ổn định, thời gian linh hoạt, được đào tạo bài bản và luôn có người hỗ trợ khi gặp khó khăn trong công việc.</p>
-        </header>
 
         <div class="prose">
           <h2>Vị trí đang tuyển</h2>
@@ -717,7 +723,10 @@ function jobsPage() {
             <a class="btn-ghost" href="mailto:${SITE.email}">Gửi email ứng tuyển</a>
           </div>
         </aside>
-      </article>`,
+      </article>
+
+${sidebar({ cta: false })}
+      </div>`,
   });
 }
 

@@ -2445,8 +2445,6 @@ a:hover {
 
 /* ---------- Sidebar bài viết ---------- */
 .sidebar {
-  position: sticky;
-  top: 84px;
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -2598,9 +2596,6 @@ a:hover {
     grid-template-columns: 1fr;
     gap: 30px;
   }
-  .sidebar {
-    position: static;
-  }
   .side-cta-img {
     aspect-ratio: 21 / 9;
   }
@@ -2644,4 +2639,191 @@ a:hover {
   .news-grid--cat .news-body {
     justify-content: center;
   }
+}
+
+/* ============================================================
+   HEADER: chống tràn ngang
+   .brand/.main-nav/.hotline-pill đều flex-shrink:0 nên không có gì co
+   được — tổng bề rộng vượt khung là tràn ngay. Header đầy đủ cần 1282px,
+   nên phải thu nhỏ theo nấc trước khi chuyển sang hamburger.
+   Đặt cuối file để thắng các @media khai báo trước đó.
+   ============================================================ */
+
+/* Nấc 1: dưới 1280px — thu gọn vừa phải, vẫn giữ menu đầy đủ */
+@media (max-width: 1280px) {
+  .header-inner {
+    padding: 12px 16px;
+    gap: 14px;
+  }
+  .brand-mark {
+    width: 50px;
+    height: 37px;
+  }
+  .brand-name {
+    font-size: 20px;
+  }
+  .brand-tag {
+    font-size: 8.5px;
+  }
+  .main-nav {
+    gap: 18px;
+    font-size: 12.5px;
+  }
+  .hotline-pill {
+    padding: 6px 16px 6px 6px;
+  }
+  .hotline-number {
+    font-size: 16px;
+  }
+}
+
+/* Nấc 2: dưới 1100px — bóp sát hơn để menu vẫn đủ chỗ */
+@media (max-width: 1100px) {
+  .header-inner {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+  .main-nav {
+    gap: 13px;
+    font-size: 11.5px;
+  }
+  .brand-mark {
+    width: 44px;
+    height: 33px;
+  }
+  .brand-name {
+    font-size: 18px;
+  }
+  .brand-tag {
+    font-size: 7.5px;
+  }
+  .hotline-pill {
+    gap: 7px;
+    padding: 5px 13px 5px 5px;
+  }
+  .hotline-icon {
+    width: 30px;
+    height: 30px;
+  }
+  .hotline-number {
+    font-size: 14.5px;
+  }
+  .hotline-label {
+    font-size: 8.5px;
+  }
+}
+
+/* Nấc 3: dưới 960px — kể cả khi đã bóp hết cỡ, menu đầy đủ vẫn cần 935px
+   nên chuyển sang hamburger. Tách riêng khỏi @media 820px cũ để không
+   ảnh hưởng bố cục hero/jobs/footer vốn gắn với mốc đó. */
+@media (max-width: 960px) {
+  .nav-toggle {
+    display: flex;
+  }
+  .header-inner {
+    position: relative;
+    flex-wrap: wrap;
+  }
+  .hotline-pill {
+    order: 2;
+  }
+  .main-nav {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    font-size: 13px;
+    background: #fff;
+    border-top: 1px solid var(--blue-100);
+    box-shadow: 0 14px 24px rgba(11, 59, 143, 0.16);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.28s ease;
+  }
+  .main-nav.is-open {
+    max-height: 620px;
+    overflow-y: auto;
+  }
+  .main-nav > a {
+    width: 100%;
+    padding: 14px 28px;
+    border-bottom: 1px solid #eef3fa;
+  }
+
+  /* Dropdown Dịch vụ thành accordion */
+  .nav-drop {
+    display: block;
+    width: 100%;
+    border-bottom: 1px solid #eef3fa;
+    position: relative;
+  }
+  .nav-drop-btn {
+    width: 100%;
+    padding: 14px 52px 14px 28px;
+  }
+  .nav-drop-btn .nav-caret {
+    display: none;
+  }
+  .nav-drop-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 52px;
+    height: 48px;
+    color: var(--navy-700);
+  }
+  .nav-drop-toggle .nav-caret {
+    width: 18px;
+    height: 18px;
+  }
+  .nav-drop.is-open .nav-drop-toggle .nav-caret {
+    transform: rotate(180deg);
+  }
+  .nav-drop-menu {
+    position: static;
+    min-width: 0;
+    width: 100%;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: var(--blue-050);
+    padding: 0;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.26s ease;
+  }
+  .nav-drop.is-open .nav-drop-menu {
+    max-height: 460px;
+  }
+  .nav-drop:hover .nav-drop-menu {
+    opacity: 1;
+  }
+  .nav-drop-menu a {
+    padding: 12px 28px 12px 40px;
+    border-radius: 0;
+    white-space: normal;
+  }
+}
+
+/* Ảnh trang tuyển cộng tác viên: ảnh vuông cắt nền, dùng contain trên nền
+   xanh nhạt thay vì cover 3:2 (cover sẽ cắt mất đầu/chân nhân vật). */
+.prose-figure--jobs {
+  background: linear-gradient(160deg, #dceaff, #eaf3ff);
+  display: flex;
+  justify-content: center;
+}
+.prose-figure--jobs img {
+  width: auto;
+  max-width: 100%;
+  max-height: 340px;
+  object-fit: contain;
 }
