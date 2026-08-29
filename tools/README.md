@@ -22,6 +22,7 @@ dưới 1000 từ, lệnh sẽ báo lỗi và thoát với mã 1.
 | 3 bài dịch vụ sau | `tools/content-services2.js` |
 | 4 bài tin tức | `tools/content-news.js` |
 | Trang giới thiệu / cộng tác viên / liên hệ | `tools/build.js` (cuối file) |
+| 3 khối trên trang chủ (dịch vụ, lý do, quy trình) | `tools/content-home.js` |
 
 Thêm một dịch vụ mới: thêm mục vào mảng `SERVICES` trong `tools/layout.js`
 (cho dropdown) **và** thêm bài viết tương ứng vào một trong hai file
@@ -64,3 +65,18 @@ hero, không dùng khung 3:2.
 Mã GA4 (`G-EP93RGYSQR`) đặt trong `headHtml()` ở `tools/layout.js` nên
 mọi trang đều có, kể cả `index.html` (build tự đồng bộ phần `<head>`).
 Đổi mã đo hoặc gỡ bỏ thì sửa đúng một chỗ đó rồi chạy lại build.
+
+## Vì sao trang chủ không còn render bằng JS
+
+Bản đầu tiên để 3 div rỗng (`#serviceGrid`, `#whyGrid`, `#processGrid`) rồi
+nhờ `main.js` đổ nội dung vào lúc chạy. Lý do dễ hiểu: hồi đó dự án chưa có
+build step nên nơi duy nhất chạy được vòng lặp là trình duyệt.
+
+Hệ quả là HTML thô thiếu 200 chữ và 6 link nội bộ — bot không chạy JS sẽ
+không thấy. Nay `build.js` in sẵn 3 khối đó vào `index.html` giữa cặp marker
+`<!--gen:services-->…<!--/gen:services-->`, nên bật hay tắt JS đều cho kết
+quả giống nhau.
+
+`main.js` giờ chỉ còn phần TƯƠNG TÁC (menu, carousel, form, reveal).
+**Đừng thêm code render nội dung vào đó nữa** — muốn sửa nội dung 3 khối thì
+sửa `tools/content-home.js` rồi chạy lại build.

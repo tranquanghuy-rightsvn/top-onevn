@@ -32,6 +32,7 @@ if (missing.length) {
   process.exit(1);
 }
 const NEWS = require("./content-news");
+const { REASONS, STEPS, SERVICE_ICONS } = require("./content-home");
 
 const img = (n) => `/assets/images/${n}.webp`;
 
@@ -90,6 +91,53 @@ const ctaBox = `        <aside class="cta-box">
             <a class="btn-ghost" href="/lien-he/">Gửi yêu cầu</a>
           </div>
         </aside>`;
+
+/* ---------------- 3 khối trang chủ (trước đây render bằng JS) ----------------
+   Sinh HTML tĩnh để nội dung có sẵn trong index.html, không phụ thuộc JS. */
+const STEP_ARROW =
+  '<span class="step-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" class="icon-svg">' +
+  '<path d="M4 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" fill="none" ' +
+  'stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
+
+function homeServicesHtml() {
+  return ALL_SERVICES.map(
+    (s) =>
+      `<a class="service-card reveal" href="/dich-vu/${s.slug}/">` +
+      `<div class="service-photo"><img src="${img(s.img)}" alt="${esc(s.title)}" ` +
+      `width="1200" height="800" loading="lazy" decoding="async" /></div>` +
+      `<div class="service-body"><span class="service-icon">${SERVICE_ICONS[s.slug] || ""}</span>` +
+      `<div class="service-text"><h3>${s.title}</h3><p>${s.short}</p></div>` +
+      `<span class="service-more">›</span></div></a>`
+  ).join("");
+}
+
+function homeReasonsHtml() {
+  return REASONS.map(
+    (r) =>
+      `<div class="why-item reveal"><span class="why-icon">${r.icon}</span>` +
+      `<h3>${r.title}</h3><p>${r.desc}</p></div>`
+  ).join("");
+}
+
+function homeStepsHtml() {
+  return STEPS.map(
+    (st, i) =>
+      (i > 0 ? STEP_ARROW : "") +
+      `<div class="step reveal"><span class="step-num">${i + 1}</span>` +
+      `<span class="step-icon">${st.icon}</span>` +
+      `<h3>${st.title}</h3><p>${st.desc}</p></div>`
+  ).join("");
+}
+
+/* Chèn nội dung vào giữa cặp marker; lần đầu chưa có marker thì tự thêm.
+   Nhờ vậy chạy build nhiều lần vẫn cho kết quả giống nhau. */
+function fillContainer(html, id, inner, key) {
+  const marker = new RegExp(`(<!--gen:${key}-->)[\\s\\S]*?(<!--/gen:${key}-->)`);
+  if (marker.test(html)) return html.replace(marker, `$1${inner}$2`);
+  const empty = new RegExp(`(id="${id}"[^>]*>)</div>`);
+  if (!empty.test(html)) throw new Error(`index.html: không tìm thấy container #${id}`);
+  return html.replace(empty, `$1<!--gen:${key}-->${inner}<!--/gen:${key}--></div>`);
+}
 
 /* ---------------- Sidebar cho trang bài viết ----------------
    Dùng chung cho trang dịch vụ và trang tin tức. */
@@ -962,10 +1010,13 @@ const headRe = /(?<=<head>\n)[\s\S]*?(?=\n  <\/head>)/;
 if (!headRe.test(idx)) throw new Error("index.html: không tìm thấy khối head");
 idx = idx.replace(headRe, homeHead);
 
+idx = fillContainer(idx, "serviceGrid", homeServicesHtml(), "services");
+idx = fillContainer(idx, "whyGrid", homeReasonsHtml(), "reasons");
+idx = fillContainer(idx, "processGrid", homeStepsHtml(), "steps");
 idx = idx.replace(navRe, headerNav("home").trim());
 idx = idx.replace(footRe, footerHtml().trim());
 fs.writeFileSync(idxPath, idx);
-console.log("\nindex.html: đã đồng bộ nav + footer");
+console.log("\nindex.html: đã đồng bộ nav + footer + 3 khối nội dung");
 
 /* Cảnh báo độ dài thẻ SEO: Google thường cắt title ~60 ký tự,
    description ~160 ký tự. */
