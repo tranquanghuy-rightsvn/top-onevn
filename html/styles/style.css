@@ -1317,6 +1317,51 @@ a:hover {
 }
 
 @media (max-width: 820px) {
+  /* Vo trang: 32px moi ben la qua nhieu tren tablet/dien thoai */
+  .page {
+    padding: 0 20px;
+  }
+
+  /* Khoi "Vi sao chon": bo cuc anh-tuyet-doi + padding-left 230px cua
+     breakpoint 1080px lam noi dung bi ep vao nua ben phai. Xep doc lai. */
+  .why-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 0;
+    padding: 0 16px;
+  }
+  .why-photo {
+    position: static;
+    width: 240px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+  }
+  .why-photo img {
+    max-height: 300px;
+  }
+  .why-content {
+    min-height: 0;
+    padding-left: 0;
+    width: 100%;
+  }
+  .section--why {
+    padding: 5px 16px 10px;
+  }
+
+  /* Quy trinh: 3 cot o 600px chi con 159px/o, chuyen ve 2 cot */
+  .step {
+    flex: 1 1 44%;
+  }
+  .process-card {
+    padding: 18px 14px 22px;
+  }
+
+  .ribbon {
+    padding: 11px 24px;
+  }
+
   .nav-toggle {
     display: flex;
   }
@@ -1431,8 +1476,36 @@ a:hover {
 }
 
 @media (max-width: 560px) {
+  .page {
+    padding: 0 12px;
+  }
   .section {
-    padding: 26px 16px 30px;
+    padding: 26px 8px 30px;
+  }
+  .why-layout {
+    padding: 0 8px;
+  }
+  .section--why {
+    padding: 5px 8px 10px;
+  }
+  .why-grid {
+    padding: 22px 12px;
+  }
+  .process-card {
+    padding: 16px 10px 20px;
+  }
+  .step {
+    padding: 18px 10px 14px;
+  }
+  /* .jobs/.contact-strip da co margin 16px tu breakpoint 820, cong them
+     padding cua .page thanh thua; bo margin ngang di */
+  .jobs,
+  .contact-strip {
+    margin: 0 0 20px;
+  }
+  .jobs-copy,
+  .jobs-cta {
+    padding: 20px 16px;
   }
   .ribbon {
     padding: 10px 18px;
@@ -1485,6 +1558,42 @@ a:hover {
   }
   .hero-feats li {
     border-right: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: 0 8px;
+  }
+  .section {
+    padding: 24px 4px 26px;
+  }
+  .why-layout,
+  .section--why {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+  .why-grid {
+    padding: 20px 8px;
+  }
+  .why-item {
+    padding: 0 6px;
+  }
+  .process-card {
+    padding: 14px 8px 18px;
+  }
+  .step {
+    padding: 16px 8px 12px;
+  }
+  .jobs-copy,
+  .jobs-cta {
+    padding: 18px 14px;
+  }
+  .ribbon {
+    padding: 10px 14px;
+  }
+  .hero-copy {
+    padding: 28px 16px 22px;
   }
 }
 
