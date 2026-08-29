@@ -8,7 +8,37 @@
       name="description"
       content="Top One VN Clean &amp; Care – dịch vụ giúp việc, vệ sinh nhà ở, văn phòng, sau xây dựng tại TP. Nha Trang, Khánh Hoà và khu vực lân cận. Hotline 0979 726 873."
     />
+    <link rel="canonical" href="https://toponevn.vn/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="vi_VN" />
+    <meta property="og:site_name" content="Top One VN" />
+    <meta property="og:title" content="Top One VN – Dịch vụ giúp việc &amp; vệ sinh chuyên nghiệp" />
+    <meta property="og:description" content="Dịch vụ giúp việc, vệ sinh nhà ở, văn phòng, sau xây dựng tại TP. Nha Trang, Khánh Hoà. Hotline 0979 726 873." />
+    <meta property="og:url" content="https://toponevn.vn/" />
+    <meta property="og:image" content="https://toponevn.vn/assets/images/hero.webp" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="assets/images/logo.webp" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "Top One VN Clean & Care",
+        "description": "Dịch vụ giúp việc và vệ sinh chuyên nghiệp tại Nha Trang, Khánh Hoà.",
+        "url": "https://toponevn.vn/",
+        "telephone": "0979 726 873",
+        "email": "cskhtoponevn@gmail.com",
+        "image": "https://toponevn.vn/assets/images/logo.webp",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "151/11 Dương Vân Nga",
+          "addressLocality": "Bắc Nha Trang",
+          "addressRegion": "Khánh Hoà",
+          "addressCountry": "VN"
+        },
+        "areaServed": { "@type": "City", "name": "Nha Trang" },
+        "openingHours": "Mo-Su 07:00-19:00"
+      }
+    </script>
     <link
       rel="preload"
       as="image"
@@ -51,12 +81,35 @@
         </button>
 
         <nav class="main-nav" id="mainNav">
-          <a href="#home">Trang chủ</a>
-          <a href="#about">Giới thiệu</a>
-          <a href="#services">Dịch vụ</a>
-          <a href="#pricing">Bảng giá</a>
-          <a href="#jobs">Tuyển cộng tác viên</a>
-          <a href="#contact">Liên hệ</a>
+          <a href="/" class="is-active">Trang chủ</a>
+          <a href="/gioi-thieu/">Giới thiệu</a>
+          <div class="nav-drop">
+            <a class="nav-drop-btn" href="/dich-vu/">
+              Dịch vụ
+              <svg class="nav-caret" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.4"
+                  fill="none" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </a>
+            <button class="nav-drop-toggle" type="button" aria-label="Mở danh sách dịch vụ"
+              aria-expanded="false">
+              <svg class="nav-caret" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.4"
+                  fill="none" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+            <ul class="nav-drop-menu">
+              <li><a href="/dich-vu/ve-sinh-nha-o/">Vệ sinh nhà ở</a></li>
+              <li><a href="/dich-vu/ve-sinh-van-phong/">Vệ sinh văn phòng</a></li>
+              <li><a href="/dich-vu/ve-sinh-sau-xay-dung/">Vệ sinh sau xây dựng</a></li>
+              <li><a href="/dich-vu/giup-viec-gia-dinh/">Giúp việc gia đình</a></li>
+              <li><a href="/dich-vu/giat-nem-sofa/">Giặt nệm sofa</a></li>
+              <li><a href="/dich-vu/lam-moi-san-da/">Làm mới sàn & mặt đá tự nhiên</a></li>
+            </ul>
+          </div>
+          <a href="/tin-tuc/">Tin tức</a>
+          <a href="/cong-tac-vien/">Tuyển cộng tác viên</a>
+          <a href="/lien-he/">Liên hệ</a>
         </nav>
 
         <a class="hotline-pill" href="tel:0979726873">
@@ -443,67 +496,51 @@
       <footer class="site-footer">
         <div class="footer-inner">
           <div class="foot-brand">
-            <img
-              src="assets/images/logo.webp"
-              alt="Top One VN"
-              width="260"
-              height="167"
-              loading="lazy"
-              decoding="async"
-            />
-            <span class="brand-name brand-name--light"
-              >Top One <em>VN</em></span
-            >
-            <span class="brand-tag brand-tag--light"
-              >— Dịch vụ giúp việc &amp; vệ sinh —</span
-            >
+            <img src="/assets/images/logo.webp" alt="Top One VN" width="260" height="167"
+              loading="lazy" decoding="async" />
+            <span class="brand-name brand-name--light">Top One <em>VN</em></span>
+            <span class="brand-tag brand-tag--light">— Dịch vụ giúp việc &amp; vệ sinh —</span>
           </div>
           <div class="foot-col foot-col--divided">
             <h3>Liên hệ</h3>
             <p>
               <svg viewBox="0 0 24 24" class="foot-ic">
-                <path
-                  d="M6.6 10.8c1.4 2.7 3.6 4.9 6.3 6.3l2.1-2.1c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.5.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.9 21 3 13.1 3 3.5c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.5.1.3 0 .7-.2 1l-2.1 2.1z"
-                />
+                <path d="M6.6 10.8c1.4 2.7 3.6 4.9 6.3 6.3l2.1-2.1c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.5.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.9 21 3 13.1 3 3.5c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.5.1.3 0 .7-.2 1l-2.1 2.1z" />
               </svg>
               <a href="tel:0979726873">0979 726 873</a>
             </p>
             <p>
               <svg viewBox="0 0 24 24" class="foot-ic">
-                <path
-                  d="M2 5.5A1.5 1.5 0 0 1 3.5 4h17A1.5 1.5 0 0 1 22 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 18.5v-13zm2.2.5 7.3 6 7.3-6H4.2zM20 7.9l-7.4 6.1a1 1 0 0 1-1.2 0L4 7.9v10.1h16V7.9z"
-                />
+                <path d="M2 5.5A1.5 1.5 0 0 1 3.5 4h17A1.5 1.5 0 0 1 22 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 18.5v-13zm2.2.5 7.3 6 7.3-6H4.2zM20 7.9l-7.4 6.1a1 1 0 0 1-1.2 0L4 7.9v10.1h16V7.9z" />
               </svg>
               <a href="mailto:cskhtoponevn@gmail.com">cskhtoponevn@gmail.com</a>
             </p>
             <p>
               <svg viewBox="0 0 24 24" class="foot-ic">
-                <path
-                  d="M12 22s7-6.8 7-12.5A7 7 0 1 0 5 9.5C5 15.2 12 22 12 22z"
-                />
+                <path d="M12 22s7-6.8 7-12.5A7 7 0 1 0 5 9.5C5 15.2 12 22 12 22z" />
                 <circle cx="12" cy="9.5" r="2.6" fill="#0a2f77" />
               </svg>
               <span>151/11 Dương Vân Nga,<br />Bắc Nha Trang, Khánh Hoà</span>
             </p>
           </div>
           <div class="foot-col foot-col--divided">
-            <h3>Về Top One VN</h3>
+            <h3>Dịch vụ</h3>
             <ul class="foot-links">
-              <li><a href="#about">Giới thiệu</a></li>
-              <li><a href="#services">Dịch vụ</a></li>
-              <li><a href="#pricing">Bảng giá</a></li>
-              <li><a href="#jobs">Tuyển cộng tác viên</a></li>
-              <li><a href="#contact">Liên hệ</a></li>
+              <li><a href="/dich-vu/ve-sinh-nha-o/">Vệ sinh nhà ở</a></li>
+              <li><a href="/dich-vu/ve-sinh-van-phong/">Vệ sinh văn phòng</a></li>
+              <li><a href="/dich-vu/ve-sinh-sau-xay-dung/">Vệ sinh sau xây dựng</a></li>
+              <li><a href="/dich-vu/giup-viec-gia-dinh/">Giúp việc gia đình</a></li>
+              <li><a href="/dich-vu/">Xem tất cả dịch vụ</a></li>
             </ul>
           </div>
           <div class="foot-col foot-col--divided">
-            <h3>Kết nối với chúng tôi</h3>
-            <div class="socials">
-              <a class="soc soc--fb" href="#home" aria-label="Facebook">f</a>
-              <a class="soc soc--zalo" href="#home" aria-label="Zalo">Zalo</a>
-              <a class="soc soc--yt" href="#home" aria-label="YouTube">▶</a>
-              <a class="soc soc--tt" href="#home" aria-label="TikTok">♪</a>
-            </div>
+            <h3>Về Top One VN</h3>
+            <ul class="foot-links">
+              <li><a href="/gioi-thieu/">Giới thiệu</a></li>
+              <li><a href="/tin-tuc/">Tin tức</a></li>
+              <li><a href="/cong-tac-vien/">Tuyển cộng tác viên</a></li>
+              <li><a href="/lien-he/">Liên hệ</a></li>
+            </ul>
           </div>
           <div class="seal">
             <span class="seal-stars">★★★</span>
@@ -512,6 +549,14 @@
           </div>
         </div>
       </footer>
+
+      <div class="copyright">
+        © 2026 Top One VN Clean &amp; Care. All rights reserved.
+      </div>
+
+      <div class="copyright">
+        © 2026 Top One VN Clean &amp; Care. All rights reserved.
+      </div>
 
       <div class="copyright">
         © 2024 Top One VN Clean &amp; Care. All rights reserved.

@@ -8,36 +8,42 @@ const SERVICES = [
     icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="icon-svg"><path d="M341.8 72.6C329.5 61.2 310.5 61.2 298.3 72.6L74.3 280.6C64.7 289.6 61.5 303.5 66.3 315.7C71.1 327.9 82.8 336 96 336L112 336L112 512C112 547.3 140.7 576 176 576L464 576C499.3 576 528 547.3 528 512L528 336L544 336C557.2 336 569 327.9 573.8 315.7C578.6 303.5 575.4 289.5 565.8 280.6L341.8 72.6zM304 384L336 384C362.5 384 384 405.5 384 432L384 528L256 528L256 432C256 405.5 277.5 384 304 384z"/></svg>',
     title: "Vệ sinh nhà ở",
     desc: "Dọn dẹp, lau chùi, sắp xếp gọn gàng",
+    slug: "ve-sinh-nha-o",
     photo: "assets/images/hero-1.webp",
   },
   {
     icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="icon-svg"><path d="M4 21V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v17h-2v-3h-2v3H9v-3H7v3H4zM7 6h2v2H7V6zm4 0h2v2h-2V6zM7 10h2v2H7v-2zm4 0h2v2h-2v-2zM7 14h2v2H7v-2zm4 0h2v2h-2v-2zM16 9h4a1 1 0 0 1 1 1v11h-5V9zm2 3v2h1v-2h-1zm0 4v2h1v-2h-1z"/></svg>',
     title: "Vệ sinh văn phòng",
     desc: "Sạch sẽ, chuyên nghiệp, hiệu quả",
+    slug: "ve-sinh-van-phong",
     photo: "assets/images/hero-2.webp",
   },
   {
     icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="icon-svg"><path d="M4 3h16v18H4V3zm2 2v14h5V5H6zm7 0v14h5V5h-5z"/></svg>',
     title: "Vệ sinh sau xây dựng",
     desc: "Làm sạch công trình, trả lại diện mạo mới",
+    slug: "ve-sinh-sau-xay-dung",
     photo: "assets/images/hero-3.webp",
   },
   {
     icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="icon-svg"><path d="M341.8 72.6C329.5 61.2 310.5 61.2 298.3 72.6L74.3 280.6C64.7 289.6 61.5 303.5 66.3 315.7C71.1 327.9 82.8 336 96 336L112 336L112 512C112 547.3 140.7 576 176 576L464 576C499.3 576 528 547.3 528 512L528 336L544 336C557.2 336 569 327.9 573.8 315.7C578.6 303.5 575.4 289.5 565.8 280.6L341.8 72.6zM304 384L336 384C362.5 384 384 405.5 384 432L384 528L256 528L256 432C256 405.5 277.5 384 304 384z"/></svg>',
     title: "Giúp việc gia đình",
     desc: "Nấu ăn, dọn dẹp, chăm sóc gia đình",
+    slug: "giup-viec-gia-dinh",
     photo: "assets/images/hero-4.webp",
   },
   {
     icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="icon-svg"><path d="M5 11V8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3a2 2 0 0 1 2 2v4.5a1 1 0 0 1-1 1h-1V19h-2v-1.5H7V19H5v-1.5H4a1 1 0 0 1-1-1V13a2 2 0 0 1 2-2zm2 0h10V8H7v3zM3 13v2.5h18V13a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1z"/></svg>',
     title: "Giặt nệm sofa",
     desc: "Giặt sạch nệm, sofa, khử mùi và diệt khuẩn chuyên sâu",
+    slug: "giat-nem-sofa",
     photo: "assets/images/hero-1.webp",
   },
   {
     icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="icon-svg"><path d="M12 2l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/><rect x="3" y="18" width="18" height="3" rx="1"/></svg>',
     title: "Làm mới sàn & mặt đá tự nhiên",
     desc: "Đánh bóng sàn, mặt đá tự nhiên sảnh khách sạn, quầy bar",
+    slug: "lam-moi-san-da",
     photo: "assets/images/hero-3.webp",
   },
 ];
@@ -102,7 +108,7 @@ function renderServices() {
       ? '<img src="' + s.photo + '" alt="' + s.title + '" width="700" height="352" loading="lazy" decoding="async" />'
       : "ảnh " + s.title.toLowerCase();
     return (
-      '<article class="service-card reveal">' +
+      '<a class="service-card reveal" href="/dich-vu/' + s.slug + '/">' +
       '<div class="service-photo">' +
       media +
       "</div>" +
@@ -117,7 +123,7 @@ function renderServices() {
       "</p></div>" +
       '<span class="service-more">›</span>' +
       "</div>" +
-      "</article>"
+      "</a>"
     );
   }).join("");
 }
@@ -268,12 +274,91 @@ function initReveal() {
   setTimeout(showAll, 1200);
 }
 
+/* ---------- Dropdown "Dịch vụ": accordion trên mobile ---------- */
+function initNavDropdown() {
+  document.querySelectorAll(".nav-drop").forEach(function (drop) {
+    const btn = drop.querySelector(".nav-drop-toggle");
+    if (!btn) return;
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const open = drop.classList.toggle("is-open");
+      btn.setAttribute("aria-expanded", String(open));
+    });
+  });
+}
+
+/* ---------- Form liên hệ ----------
+   Trang tĩnh không có backend, nên form soạn sẵn email rồi mở ứng dụng mail.
+   Muốn nhận trực tiếp vào hộp thư thì cần gắn Formspree/Web3Forms hoặc
+   một Worker endpoint - xem ghi chú trong README. */
+function initContactForm() {
+  const form = document.getElementById("contactForm");
+  if (!form) return;
+  const note = document.getElementById("cfNote");
+
+  function setNote(msg, kind) {
+    if (!note) return;
+    note.textContent = msg;
+    note.className = "form-note" + (kind ? " is-" + kind : "");
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const name = form.name.value.trim();
+    const phone = form.phone.value.trim();
+    const email = form.email.value.trim();
+    const service = form.service.value;
+    const message = form.message.value.trim();
+
+    form.querySelectorAll(".has-error").forEach(function (el) {
+      el.classList.remove("has-error");
+    });
+
+    if (!name) {
+      form.name.classList.add("has-error");
+      form.name.focus();
+      setNote("Vui lòng nhập họ và tên.", "error");
+      return;
+    }
+    if (!/^[0-9+\s().-]{9,15}$/.test(phone)) {
+      form.phone.classList.add("has-error");
+      form.phone.focus();
+      setNote("Số điện thoại chưa hợp lệ.", "error");
+      return;
+    }
+
+    const lines = [
+      "Họ tên: " + name,
+      "Điện thoại: " + phone,
+      email ? "Email: " + email : "",
+      service ? "Dịch vụ quan tâm: " + service : "",
+      "",
+      message || "(không có nội dung thêm)",
+    ].filter(Boolean);
+
+    const subject = "Yêu cầu báo giá từ " + name;
+    window.location.href =
+      "mailto:cskhtoponevn@gmail.com?subject=" +
+      encodeURIComponent(subject) +
+      "&body=" +
+      encodeURIComponent(lines.join("\n"));
+
+    setNote(
+      "Đang mở ứng dụng email của bạn. Nếu không tự mở, vui lòng gọi 0979 726 873.",
+      "ok"
+    );
+  });
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   renderServices();
   renderReasons();
   renderSteps();
   initServiceCarousel();
   initNav();
+  initNavDropdown();
+  initContactForm();
   initStickyHeader();
   initReveal();
 });
