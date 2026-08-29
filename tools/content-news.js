@@ -4,6 +4,7 @@ module.exports = [
   {
     slug: "lich-tong-ve-sinh-nha-cua-don-tet",
     title: "Lịch tổng vệ sinh nhà cửa đón Tết: nên bắt đầu từ khi nào?",
+    seoTitle: "Lịch tổng vệ sinh nhà đón Tết",
     date: "2026-08-24",
     dateText: "24/08/2026",
     img: "hero-1",
@@ -28,6 +29,7 @@ module.exports = [
   {
     slug: "chon-dich-vu-ve-sinh-uy-tin",
     title: "Năm dấu hiệu nhận biết một đơn vị vệ sinh làm ăn tử tế",
+    seoTitle: "Cách chọn đơn vị vệ sinh uy tín",
     date: "2026-08-12",
     dateText: "12/08/2026",
     img: "hero-2",

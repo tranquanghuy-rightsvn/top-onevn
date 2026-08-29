@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
 
+# Không có khu vực riêng tư nào cần chặn; các file cấu hình dưới đây
+# không phải nội dung nên loại khỏi kết quả tìm kiếm.
+Disallow: /_headers
+
 Sitemap: https://toponevn.vn/sitemap.xml

@@ -6,7 +6,7 @@ module.exports = [
     title: "Giúp việc gia đình",
     h1: "Dịch vụ giúp việc gia đình tại Nha Trang",
     description:
-      "Giúp việc gia đình theo giờ, theo ngày hoặc ở lại tại Nha Trang, Khánh Hoà. Người giúp việc có lý lịch rõ ràng, được đào tạo, công ty bảo lãnh và thay người khi cần.",
+      "Giúp việc gia đình theo giờ, theo ngày hoặc ở lại tại Nha Trang. Lý lịch rõ ràng, được đào tạo, công ty bảo lãnh và thay người khi cần.",
     img: "hero-4",
     lead: "Tìm được người giúp việc tin cậy khó hơn nhiều so với việc trả lương cho họ. Nỗi lo lớn nhất của các gia đình không phải chi phí, mà là giao nhà cho một người lạ — rồi người đó nghỉ ngang giữa chừng. Top One VN đứng ra làm bên chịu trách nhiệm: người giúp việc do công ty tuyển chọn, đào tạo, bảo lãnh và thay thế khi cần.",
     sections: [

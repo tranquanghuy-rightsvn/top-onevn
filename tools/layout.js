@@ -190,23 +190,117 @@ function crumbLd(trail) {
   };
 }
 
+/* ---------------- JSON-LD dùng chung cho MỌI trang ---------------- */
+const GEO = { lat: 12.2752637, lng: 109.1905293 };
+
+const ORG_LD = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": SITE.origin + "/#organization",
+  name: "Top One VN Clean & Care",
+  alternateName: SITE.name,
+  url: SITE.origin + "/",
+  logo: {
+    "@type": "ImageObject",
+    url: SITE.origin + "/assets/images/logo.webp",
+    width: 260,
+    height: 167,
+  },
+  telephone: SITE.phoneText,
+  email: SITE.email,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "151/11 Dương Vân Nga",
+    addressLocality: "Bắc Nha Trang",
+    addressRegion: "Khánh Hoà",
+    postalCode: "57000",
+    addressCountry: "VN",
+  },
+  areaServed: { "@type": "City", name: "Nha Trang" },
+};
+
+const WEBSITE_LD = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": SITE.origin + "/#website",
+  url: SITE.origin + "/",
+  name: SITE.name,
+  inLanguage: "vi-VN",
+  publisher: { "@id": SITE.origin + "/#organization" },
+};
+
+/* LocalBusiness đầy đủ (có toạ độ + giờ mở cửa) – dùng cho trang chủ, giới thiệu, liên hệ */
+const BUSINESS_LD = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "@id": SITE.origin + "/#business",
+  name: "Top One VN Clean & Care",
+  description:
+    "Dịch vụ giúp việc gia đình và vệ sinh chuyên nghiệp tại TP. Nha Trang, Khánh Hoà.",
+  url: SITE.origin + "/",
+  telephone: SITE.phoneText,
+  email: SITE.email,
+  image: SITE.origin + "/assets/images/hero.webp",
+  logo: SITE.origin + "/assets/images/logo.webp",
+  priceRange: "₫₫",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "151/11 Dương Vân Nga",
+    addressLocality: "Bắc Nha Trang",
+    addressRegion: "Khánh Hoà",
+    postalCode: "57000",
+    addressCountry: "VN",
+  },
+  geo: { "@type": "GeoCoordinates", latitude: GEO.lat, longitude: GEO.lng },
+  areaServed: { "@type": "City", name: "Nha Trang" },
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: [
+        "Monday", "Tuesday", "Wednesday", "Thursday",
+        "Friday", "Saturday", "Sunday",
+      ],
+      opens: "07:00",
+      closes: "19:00",
+    },
+  ],
+};
+
 /* ---------------- Khung trang ---------------- */
-function layout(o) {
+/* Phần thân <head> — tách riêng để index.html (viết tay) dùng chung. */
+function headHtml(o) {
   const url = SITE.origin + o.path;
   const ogImg = SITE.origin + (o.image || "/assets/images/hero.webp");
-  const ld = (o.jsonld || []).filter(Boolean);
+
+  /* Organization + WebSite gắn vào mọi trang, rồi mới tới schema riêng của trang */
+  const ld = [ORG_LD, WEBSITE_LD, ...(o.jsonld || [])].filter(Boolean);
   const ldTags = ld
     .map((x) => `    <script type="application/ld+json">\n${JSON.stringify(x, null, 2)}\n    </script>`)
     .join("\n");
 
-  return `<!doctype html>
-<html lang="vi">
-  <head>
-    <meta charset="utf-8" />
+  const artTags = o.published
+    ? `    <meta property="article:published_time" content="${o.published}" />\n` +
+      `    <meta property="article:modified_time" content="${o.modified || o.published}" />\n` +
+      `    <meta property="article:publisher" content="${SITE.origin}/" />\n`
+    : "";
+
+  return `    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>${esc(o.title)}</title>
     <meta name="description" content="${esc(o.description)}" />
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    />
     <link rel="canonical" href="${url}" />
+    <meta name="author" content="Top One VN Clean &amp; Care" />
+    <meta name="theme-color" content="#0a2f77" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="geo.region" content="VN-34" />
+    <meta name="geo.placename" content="Nha Trang, Khánh Hoà" />
+    <meta name="geo.position" content="${GEO.lat};${GEO.lng}" />
+    <meta name="ICBM" content="${GEO.lat}, ${GEO.lng}" />
+
     <meta property="og:type" content="${o.ogType || "website"}" />
     <meta property="og:locale" content="vi_VN" />
     <meta property="og:site_name" content="Top One VN" />
@@ -214,8 +308,19 @@ function layout(o) {
     <meta property="og:description" content="${esc(o.description)}" />
     <meta property="og:url" content="${url}" />
     <meta property="og:image" content="${ogImg}" />
+    <meta property="og:image:width" content="1400" />
+    <meta property="og:image:height" content="744" />
+    <meta property="og:image:alt" content="${esc(o.imageAlt || o.title)}" />
+${artTags}
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="${esc(o.title)}" />
+    <meta name="twitter:description" content="${esc(o.description)}" />
+    <meta name="twitter:image" content="${ogImg}" />
+    <meta name="twitter:image:alt" content="${esc(o.imageAlt || o.title)}" />
+
     <link rel="icon" href="/assets/images/logo.webp" />
+    <link rel="apple-touch-icon" href="/assets/images/logo.webp" />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
 ${o.preload ? `    <link rel="preload" as="image" href="${o.preload}" fetchpriority="high" />\n` : ""}    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -223,7 +328,14 @@ ${o.preload ? `    <link rel="preload" as="image" href="${o.preload}" fetchprior
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/styles/style.css" />
-${ldTags}
+${ldTags}`;
+}
+
+function layout(o) {
+  return `<!doctype html>
+<html lang="vi">
+  <head>
+${headHtml(o)}
   </head>
   <body>
 ${header(o.active)}
@@ -242,4 +354,8 @@ ${footer()}
 `;
 }
 
-module.exports = { SITE, SERVICES, esc, layout, crumbLd, headerNav, footerHtml: footer };
+module.exports = {
+  SITE, SERVICES, esc, layout, crumbLd,
+  headerNav, footerHtml: footer, headHtml,
+  ORG_LD, WEBSITE_LD, BUSINESS_LD, GEO,
+};

@@ -4,7 +4,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const { SITE, SERVICES, esc, layout, crumbLd } = require("./layout");
+const { SITE, SERVICES, esc, layout, crumbLd, BUSINESS_LD, GEO } = require("./layout");
 
 const ROOT = path.join(__dirname, "..", "html");
 const ALL_SERVICES = [
@@ -192,7 +192,29 @@ function servicesIndex() {
     path: "/dich-vu/",
     active: "dich-vu",
     crumbs: trail,
-    jsonld: [crumbLd(trail)],
+    jsonld: [
+      crumbLd(trail),
+      {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        name: "Dịch vụ của Top One VN",
+        url: SITE.origin + "/dich-vu/",
+        description:
+          "Sáu dịch vụ giúp việc và vệ sinh của Top One VN tại Nha Trang, Khánh Hoà.",
+        isPartOf: { "@id": SITE.origin + "/#website" },
+        about: { "@id": SITE.origin + "/#organization" },
+        mainEntity: {
+          "@type": "ItemList",
+          numberOfItems: ALL_SERVICES.length,
+          itemListElement: ALL_SERVICES.map((s, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            name: s.title,
+            url: SITE.origin + "/dich-vu/" + s.slug + "/",
+          })),
+        },
+      },
+    ],
     body: `      <section class="page-head">
         <h1>Dịch vụ của Top One VN</h1>
         <p>Chúng tôi phục vụ khách hàng cá nhân và doanh nghiệp tại TP. Nha Trang và khu vực lân cận trong tỉnh Khánh Hoà. Mọi dịch vụ đều được khảo sát và báo giá trước khi triển khai.</p>
@@ -241,7 +263,27 @@ function newsIndex() {
     path: "/tin-tuc/",
     active: "tin-tuc",
     crumbs: trail,
-    jsonld: [crumbLd(trail)],
+    jsonld: [
+      crumbLd(trail),
+      {
+        "@context": "https://schema.org",
+        "@type": "Blog",
+        name: "Tin tức & kinh nghiệm — Top One VN",
+        url: SITE.origin + "/tin-tuc/",
+        description:
+          "Kinh nghiệm vệ sinh nhà cửa và chọn dịch vụ, chia sẻ từ đội ngũ Top One VN.",
+        inLanguage: "vi-VN",
+        isPartOf: { "@id": SITE.origin + "/#website" },
+        publisher: { "@id": SITE.origin + "/#organization" },
+        blogPost: NEWS.map((n) => ({
+          "@type": "BlogPosting",
+          headline: n.title,
+          url: SITE.origin + "/tin-tuc/" + n.slug + "/",
+          datePublished: n.date,
+          image: SITE.origin + img(n.img),
+        })),
+      },
+    ],
     body: `      <section class="page-head">
         <h1>Tin tức &amp; kinh nghiệm</h1>
         <p>Những bài viết ngắn từ kinh nghiệm thực tế của đội ngũ Top One VN, giúp bạn giữ nhà cửa sạch sẽ và chọn được dịch vụ phù hợp.</p>
@@ -277,7 +319,7 @@ function newsPage(n) {
   ];
 
   return layout({
-    title: `${n.title} | Top One VN`,
+    title: n.seoTitle ? `${n.seoTitle} | Top One VN` : n.title,
     description: n.excerpt,
     path: `/tin-tuc/${n.slug}/`,
     image: img(n.img),
@@ -285,6 +327,8 @@ function newsPage(n) {
     active: "tin-tuc",
     crumbs: trail,
     ogType: "article",
+    published: n.date,
+    imageAlt: n.title,
     jsonld: [
       crumbLd(trail),
       {
@@ -342,32 +386,24 @@ function aboutPage() {
     { name: "Giới thiệu", url: "/gioi-thieu/" },
   ];
   return layout({
-    title: "Giới thiệu Top One VN – Dịch vụ giúp việc & vệ sinh tại Nha Trang",
+    title: "Giới thiệu | Top One VN Clean & Care",
     description:
-      "Top One VN Clean & Care cung cấp dịch vụ giúp việc và vệ sinh chuyên nghiệp tại Nha Trang, Khánh Hoà. Nhân sự được đào tạo, quy trình rõ ràng, báo giá minh bạch.",
+      "Top One VN Clean & Care – dịch vụ giúp việc và vệ sinh tại Nha Trang. Nhân sự được đào tạo, quy trình rõ ràng, báo giá minh bạch.",
     path: "/gioi-thieu/",
     active: "gioi-thieu",
     crumbs: trail,
     jsonld: [
       crumbLd(trail),
+      BUSINESS_LD,
       {
         "@context": "https://schema.org",
-        "@type": "LocalBusiness",
-        name: SITE.name,
+        "@type": "AboutPage",
+        name: "Giới thiệu Top One VN",
+        url: SITE.origin + "/gioi-thieu/",
         description:
-          "Dịch vụ giúp việc và vệ sinh chuyên nghiệp tại Nha Trang, Khánh Hoà.",
-        telephone: SITE.phoneText,
-        email: SITE.email,
-        url: SITE.origin,
-        image: SITE.origin + "/assets/images/logo.webp",
-        address: {
-          "@type": "PostalAddress",
-          streetAddress: "151/11 Dương Vân Nga",
-          addressLocality: "Bắc Nha Trang",
-          addressRegion: "Khánh Hoà",
-          addressCountry: "VN",
-        },
-        areaServed: { "@type": "City", name: "Nha Trang" },
+          "Giới thiệu về Top One VN Clean & Care — đơn vị dịch vụ giúp việc và vệ sinh tại Nha Trang, Khánh Hoà.",
+        isPartOf: { "@id": SITE.origin + "/#website" },
+        about: { "@id": SITE.origin + "/#organization" },
       },
     ],
     body: `      <article class="prose-page">
@@ -411,13 +447,52 @@ function jobsPage() {
     { name: "Tuyển cộng tác viên", url: "/cong-tac-vien/" },
   ];
   return layout({
-    title: "Tuyển cộng tác viên vệ sinh & giúp việc tại Nha Trang | Top One VN",
+    title: "Tuyển cộng tác viên | Top One VN",
     description:
       "Top One VN tuyển cộng tác viên vệ sinh, giúp việc tại Nha Trang. Thu nhập 6–12 triệu/tháng, thời gian linh hoạt, được đào tạo miễn phí. Hotline 0979 726 873.",
     path: "/cong-tac-vien/",
     active: "cong-tac-vien",
     crumbs: trail,
-    jsonld: [crumbLd(trail)],
+    jsonld: [
+      crumbLd(trail),
+      {
+        "@context": "https://schema.org",
+        "@type": "JobPosting",
+        title: "Cộng tác viên vệ sinh & giúp việc gia đình",
+        description:
+          "Top One VN tuyển cộng tác viên vệ sinh nhà ở, văn phòng, vệ sinh công nghiệp và giúp việc gia đình tại TP. Nha Trang. Được đào tạo miễn phí, cung cấp đồng phục và dụng cụ, chủ động đăng ký lịch làm.",
+        datePosted: "2026-08-01",
+        validThrough: "2027-08-01",
+        employmentType: ["FULL_TIME", "PART_TIME", "CONTRACTOR"],
+        hiringOrganization: { "@id": SITE.origin + "/#organization" },
+        jobLocation: {
+          "@type": "Place",
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: "151/11 Dương Vân Nga",
+            addressLocality: "Bắc Nha Trang",
+            addressRegion: "Khánh Hoà",
+            postalCode: "57000",
+            addressCountry: "VN",
+          },
+        },
+        baseSalary: {
+          "@type": "MonetaryAmount",
+          currency: "VND",
+          value: {
+            "@type": "QuantitativeValue",
+            minValue: 6000000,
+            maxValue: 12000000,
+            unitText: "MONTH",
+          },
+        },
+        applicantLocationRequirements: {
+          "@type": "Country",
+          name: "Vietnam",
+        },
+        directApply: false,
+      },
+    ],
     body: `      <article class="prose-page">
         <figure class="prose-figure prose-figure--top">
           <img src="/assets/images/jobs-staff.webp" alt="Cộng tác viên Top One VN"
@@ -501,7 +576,20 @@ function contactPage() {
     path: "/lien-he/",
     active: "lien-he",
     crumbs: trail,
-    jsonld: [crumbLd(trail)],
+    jsonld: [
+      crumbLd(trail),
+      BUSINESS_LD,
+      {
+        "@context": "https://schema.org",
+        "@type": "ContactPage",
+        name: "Liên hệ Top One VN",
+        url: SITE.origin + "/lien-he/",
+        description:
+          "Thông tin liên hệ, form yêu cầu báo giá và bản đồ tới văn phòng Top One VN tại Nha Trang.",
+        isPartOf: { "@id": SITE.origin + "/#website" },
+        about: { "@id": SITE.origin + "/#organization" },
+      },
+    ],
     body: `      <section class="page-head">
         <h1>Liên hệ với chúng tôi</h1>
         <p>Gọi hotline để được tư vấn nhanh nhất, hoặc để lại yêu cầu bên dưới. Chúng tôi phản hồi trong giờ hành chính.</p>
@@ -590,29 +678,57 @@ NEWS.forEach((n) => out.push(write(`tin-tuc/${n.slug}`, newsPage(n))));
 out.push(write("cong-tac-vien", jobsPage()));
 out.push(write("lien-he", contactPage()));
 
-/* sitemap.xml */
-const urls = [
-  "/",
-  "/gioi-thieu/",
-  "/dich-vu/",
-  ...ALL_SERVICES.map((s) => `/dich-vu/${s.slug}/`),
-  "/tin-tuc/",
-  ...NEWS.map((n) => `/tin-tuc/${n.slug}/`),
-  "/cong-tac-vien/",
-  "/lien-he/",
+/* ---------------- sitemap.xml + robots.txt ---------------- */
+const today = new Date().toISOString().slice(0, 10);
+const newestNews = NEWS.map((n) => n.date).sort().reverse()[0];
+
+const sitemapUrls = [
+  { loc: "/", pri: "1.0", freq: "weekly", mod: today },
+  { loc: "/dich-vu/", pri: "0.9", freq: "monthly", mod: today },
+  ...ALL_SERVICES.map((s) => ({
+    loc: `/dich-vu/${s.slug}/`, pri: "0.8", freq: "monthly", mod: today,
+  })),
+  { loc: "/gioi-thieu/", pri: "0.6", freq: "yearly", mod: today },
+  { loc: "/tin-tuc/", pri: "0.7", freq: "weekly", mod: newestNews },
+  ...NEWS.map((n) => ({
+    loc: `/tin-tuc/${n.slug}/`, pri: "0.6", freq: "yearly", mod: n.date,
+  })),
+  { loc: "/cong-tac-vien/", pri: "0.7", freq: "monthly", mod: today },
+  { loc: "/lien-he/", pri: "0.8", freq: "yearly", mod: today },
 ];
+
 fs.writeFileSync(
   path.join(ROOT, "sitemap.xml"),
   `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map((u) => `  <url><loc>${SITE.origin}${u}</loc></url>`).join("\n")}
+${sitemapUrls
+  .map(
+    (u) => `  <url>
+    <loc>${SITE.origin}${u.loc}</loc>
+    <lastmod>${u.mod}</lastmod>
+    <changefreq>${u.freq}</changefreq>
+    <priority>${u.pri}</priority>
+  </url>`
+  )
+  .join("\n")}
 </urlset>
 `
 );
+
 fs.writeFileSync(
   path.join(ROOT, "robots.txt"),
-  `User-agent: *\nAllow: /\n\nSitemap: ${SITE.origin}/sitemap.xml\n`
+  `User-agent: *
+Allow: /
+
+# Không có khu vực riêng tư nào cần chặn; các file cấu hình dưới đây
+# không phải nội dung nên loại khỏi kết quả tìm kiếm.
+Disallow: /_headers
+
+Sitemap: ${SITE.origin}/sitemap.xml
+`
 );
+
+const urls = sitemapUrls.map((u) => u.loc);
 
 console.log("Đã sinh " + out.length + " trang:\n");
 out.forEach((o) => console.log("  " + o.file.padEnd(46) + o.words + " từ (cả trang)"));
@@ -633,16 +749,67 @@ if (fail) {
 /* ---------------- Đồng bộ nav + footer của trang chủ ----------------
    index.html là trang viết tay, nhưng nav và footer phải khớp với các
    trang con, nên build.js thay thẳng hai khối đó. */
-const { headerNav, footerHtml } = require("./layout");
+const { headerNav, footerHtml, headHtml } = require("./layout");
 const idxPath = path.join(ROOT, "index.html");
 let idx = fs.readFileSync(idxPath, "utf8");
 
 const navRe = /<nav class="main-nav" id="mainNav">[\s\S]*?<\/nav>/;
-const footRe = /<footer class="site-footer">[\s\S]*?<\/footer>/;
+/* Khớp cả <footer> LẪN (một hoặc nhiều) div.copyright phía sau, vì footerHtml()
+   sinh ra cả hai. Nếu chỉ khớp tới </footer> thì mỗi lần build lại chèn thêm
+   một div.copyright nữa. Dấu + cũng tự dọn các bản đã bị nhân lên trước đó. */
+const footRe =
+  /<footer class="site-footer">[\s\S]*?<\/footer>(?:\s*<div class="copyright">[\s\S]*?<\/div>)+/;
 if (!navRe.test(idx)) throw new Error("index.html: không tìm thấy khối nav");
 if (!footRe.test(idx)) throw new Error("index.html: không tìm thấy khối footer");
+
+/* Thẻ <head> của trang chủ cũng sinh từ layout.js để thẻ meta/JSON-LD
+   không bị lệch so với các trang con. */
+const homeHead = headHtml({
+  title: "Top One VN – Giúp việc & vệ sinh tại Nha Trang",
+  description:
+    "Top One VN Clean & Care – dịch vụ giúp việc, vệ sinh nhà ở, văn phòng, sau xây dựng tại TP. Nha Trang, Khánh Hoà và khu vực lân cận. Hotline 0979 726 873.",
+  path: "/",
+  image: "/assets/images/hero.webp",
+  imageAlt: "Nhân viên Top One VN vệ sinh văn phòng",
+  preload: "/assets/images/hero.webp",
+  jsonld: [
+    BUSINESS_LD,
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      name: "Top One VN – Dịch vụ giúp việc & vệ sinh chuyên nghiệp",
+      url: SITE.origin + "/",
+      isPartOf: { "@id": SITE.origin + "/#website" },
+      about: { "@id": SITE.origin + "/#organization" },
+      primaryImageOfPage: {
+        "@type": "ImageObject",
+        url: SITE.origin + "/assets/images/hero.webp",
+      },
+    },
+  ],
+});
+const headRe = /(?<=<head>\n)[\s\S]*?(?=\n  <\/head>)/;
+if (!headRe.test(idx)) throw new Error("index.html: không tìm thấy khối head");
+idx = idx.replace(headRe, homeHead);
 
 idx = idx.replace(navRe, headerNav("home").trim());
 idx = idx.replace(footRe, footerHtml().trim());
 fs.writeFileSync(idxPath, idx);
 console.log("\nindex.html: đã đồng bộ nav + footer");
+
+/* Cảnh báo độ dài thẻ SEO: Google thường cắt title ~60 ký tự,
+   description ~160 ký tự. */
+const seoWarn = [];
+for (const f of [...out, { file: "index.html" }]) {
+  const html = fs.readFileSync(path.join(ROOT, f.file), "utf8");
+  const t = (html.match(/<title>([^<]*)<\/title>/) || [])[1] || "";
+  const d = (html.match(/<meta name="description" content="([^"]*)"/) || [])[1] || "";
+  if (t.length > 60) seoWarn.push(`  ${f.file}: title ${t.length} ký tự (>60)`);
+  if (d.length > 160) seoWarn.push(`  ${f.file}: description ${d.length} ký tự (>160)`);
+}
+if (seoWarn.length) {
+  console.log("\nCẢNH BÁO độ dài thẻ SEO:");
+  seoWarn.forEach((w) => console.log(w));
+} else {
+  console.log("\nĐộ dài title/description: đều trong ngưỡng");
+}
