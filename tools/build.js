@@ -619,7 +619,7 @@ function aboutPage() {
         <p class="prose-lead">Chúng tôi làm một việc duy nhất và cố gắng làm cho tốt: giữ cho không gian sống và làm việc của khách hàng tại Nha Trang luôn sạch sẽ, an toàn.</p>
 
         <figure class="prose-figure">
-          <img src="/assets/images/why-staff.webp" alt="Đội ngũ Top One VN"
+          <img src="/assets/images/why-staff.png" alt="Đội ngũ Top One VN"
             width="500" height="500" decoding="async" />
         </figure>
 
