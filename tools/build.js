@@ -985,7 +985,7 @@ if (!footRe.test(idx)) throw new Error("index.html: không tìm thấy khối fo
 /* Thẻ <head> của trang chủ cũng sinh từ layout.js để thẻ meta/JSON-LD
    không bị lệch so với các trang con. */
 const homeHead = headHtml({
-  title: "Top One VN – Giúp việc & vệ sinh tại Nha Trang",
+  title: "Top One VN - Vệ sinh công nghiệp tại Nha Trang",
   description:
     "Top One VN Clean & Care – dịch vụ giúp việc, vệ sinh nhà ở, văn phòng, sau xây dựng tại TP. Nha Trang, Khánh Hoà và khu vực lân cận. Hotline 0979 726 873.",
   path: "/",
