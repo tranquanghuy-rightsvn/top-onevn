@@ -179,11 +179,22 @@ function initContactForm() {
     })
       .then(function (res) { return res.json(); })
       .then(function (data) {
-        if (!data || !data.ok) throw new Error((data && data.error) || "Gửi yêu cầu thất bại");
+        if (!data || !data.ok) {
+          // Hiện ĐÚNG lý do server trả về (vd rate-limit "vừa gửi, đợi ít phút", thiếu cấu
+          // hình...) thay vì nuốt hết thành 1 câu chung chung - khách (và người debug) mới biết
+          // thật sự đang bị chặn vì lý do gì.
+          setNote(
+            (data && data.error) || "Gửi yêu cầu thất bại, vui lòng thử lại.",
+            "error"
+          );
+          return;
+        }
         form.reset();
         setNote("Đã gửi yêu cầu! Chúng tôi sẽ liên hệ lại sớm nhất.", "ok");
       })
       .catch(function () {
+        // Lỗi mạng thật sự (CORS/offline/timeout...) - không có phản hồi nào từ server để đọc
+        // lý do, mới rơi vào nhánh chung chung này.
         setNote(
           "Gửi yêu cầu chưa thành công, vui lòng gọi trực tiếp 0979 726 873.",
           "error"
