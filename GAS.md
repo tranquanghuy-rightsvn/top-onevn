@@ -180,18 +180,21 @@ X. Checklist bug đã thực sự gặp ở dự án này (cập nhật dần tr
      lookupSlug` để chặn. Không tái hiện được qua UI bình thường (client luôn giữ `slug ===
      origSlug` khi sửa) nhưng vi phạm đúng nguyên tắc "server không được tin việc ẩn/khoá input
      ở client là đủ" — sửa ở `Code.js` hàm `savePost`.
-   - **`html/admin/index.html` treo mãi ở "Đang tải trang quản trị…" dù đã có bộ đếm 12 giây tự
-     chuyển sang `/admin-gas/`** — phát hiện thật 11/09/2026 (tài khoản Google Workspace tổ chức
-     `mynavitechtus.com`, đúng kịch bản gotcha #25). Nguyên nhân: `<iframe>` khai sẵn trong HTML
-     KHÔNG có thuộc tính `src` tự bắn 1 sự kiện `load` cho tài liệu rỗng `about:blank` ngay lúc
-     trình duyệt parse xong thẻ đó — TRƯỚC khi script kịp gán `frame.src = CMS_URL`. Script gắn
-     listener xong mới gán src (đúng thứ tự tài liệu skill mô tả) vẫn ăn nhầm sự kiện rỗng đó
-     (event đã xếp hàng đợi, bắn ra ngay khi script đồng bộ chạy xong bất kể lúc đó src đã đổi
-     hay chưa) → `loaded` bị set `true` SAI ngay từ đầu → bộ đếm 12 giây bị vô hiệu hoá vĩnh
-     viễn, trong khi nội dung thật (URL `/a/macros/<domain>/...`) vẫn "pending" phía sau. Vá:
-     tự tạo `<iframe>` bằng `document.createElement` và gán `src` TRƯỚC khi `appendChild` vào
-     DOM — không còn bước "chèn thẻ rỗng rồi gán src sau" nên không có sự kiện `load` rỗng nào
-     để ăn nhầm nữa.
+   - **`html/admin/index.html` treo mãi ở "Đang mở trang quản trị..." (bộ đếm 12s không thấy
+     kích hoạt)** — báo lỗi thật 11/09/2026 khi Đại ca test (tài khoản Google Workspace tổ chức
+     `mynavitechtus.com`). Lúc debug, em (Claude) từng nghi do 1 spurious `load` event của
+     `<iframe>` rỗng (không có `src`) và đổi sang tự tạo iframe bằng `document.createElement` —
+     **RÚT LẠI thay đổi đó**: không có bằng chứng chắc chắn (công cụ trình duyệt tự động dùng
+     để test bị chặn đọc nội dung trang do Google, kết quả không đáng tin cậy), và quan trọng
+     hơn là đã tự ý lệch khỏi cấu trúc/logic gốc đã kiểm chứng chạy thật ở dự án xevip
+     (`xevip/html/admin/index.html`) mà không xin phép. Quyết định đúng (chốt bởi Đại ca
+     11/09/2026): **`html/admin/index.html` phải giống HỆT cấu trúc + logic file tương ứng của
+     xevip, chỉ khác giá trị riêng của dự án** (`CMS_URL`, tiêu đề, icon, màu thương hiệu) — copy
+     nguyên file xevip rồi chỉ đổi đúng các giá trị đó, không "cải tiến" thêm gì khi chưa có bằng
+     chứng cụ thể là cần thiết. Nếu `/admin/` vẫn treo sau khi đã giống hệt xevip: đó là giới hạn
+     thật của việc nhúng Apps Script qua iframe (khác nhau tuỳ trạng thái đăng nhập Google/chặn
+     cookie bên thứ 3 của từng trình duyệt) — dùng `/admin-gas/` (mở thẳng, không nhúng) làm
+     đường vào chính, không cố vá thêm `/admin/` nếu không có bằng chứng rõ nguyên nhân.
 
 XI. Script Properties (Project Settings > Script Properties trên script.google.com):
    - `GITHUB_TOKEN` — Fine-grained PAT, chỉ quyền Contents: Read and write, giới hạn đúng repo

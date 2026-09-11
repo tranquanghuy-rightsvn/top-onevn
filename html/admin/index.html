@@ -1,88 +1,113 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Quản trị | Top One VN</title>
-  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
-  <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
-  <meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
-  <meta name="referrer" content="no-referrer" />
-  <style>
-    html, body { height: 100%; margin: 0; overflow: hidden; background: #0a2f77; }
-    :root { --gg-warning-height: 25px; } /* đo thật lúc build trang này; Google đổi giao diện thì sửa số này */
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trang quản trị - Top One VN</title>
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="/assets/images/logo.webp">
+<!-- Trang quản trị: toponevn.vn/admin/ - NHÚNG CMS thẳng vào domain của mình.
+     Được 2 thứ: cắt thanh cảnh báo "This application was created by a Google Apps Script
+     user" (cao đúng 25px, đã đo) và thanh địa chỉ luôn là toponevn.vn.
+     Cắt bằng CSS (kéo iframe lên 25px trong khung overflow:hidden). KHÔNG đụng vào DOM trang
+     kia - khác origin nên không thể đụng, và cũng không cần.
 
-    .cms-viewport { position: fixed; inset: 0; overflow: hidden; }
-    .cms-frame {
-      position: absolute; left: 0; border: 0; display: block;
-      top: calc(var(--gg-warning-height) * -1);
-      width: 100%; height: calc(100% + var(--gg-warning-height));
-      background: #fff;
-    }
+     Cấu trúc + logic file này giống HỆT html/admin/index.html của dự án xevip (đã kiểm chứng
+     chạy thật) - chỉ khác CMS_URL, tiêu đề, icon, và màu thương hiệu. Không tự ý đổi khác đi.
 
-    .cms-status {
-      position: fixed; inset: 0; z-index: 10;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 16px; background: #0a2f77; color: #fff;
-      font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      text-align: center; padding: 24px; box-sizing: border-box;
-    }
-    .cms-status[hidden] { display: none; }
-    .cms-spinner {
-      width: 34px; height: 34px; border-radius: 50%;
-      border: 3px solid rgba(255, 255, 255, .25); border-top-color: #fff;
-      animation: cms-spin .8s linear infinite;
-    }
-    @keyframes cms-spin { to { transform: rotate(360deg); } }
-    .cms-status a { color: #fff; text-decoration: underline; }
-  </style>
+     ĐƯỜNG LUI: /admin-gas/ - bản chuyển hướng, luôn chạy được. Trang này tự chỉ sang đó nếu
+     12 giây không tải được.
+
+     File TĨNH, sửa tay - tools/build.js cố ý KHÔNG sinh lại (xem GAS.md mục 10 tham chiếu
+     static-site-build.md). -->
+<style>
+  html, body { height: 100%; margin: 0; overflow: hidden; background: #eef1f8;
+               font-family: "Open Sans", "Segoe UI", sans-serif; color: #1c1c1c; }
+  /* Chiều cao thanh cảnh báo của Google, đo thật 27/08/2026 (theo xevip). Google đổi giao diện
+     thì sửa đúng 1 con số này. */
+  :root { --gg-warning-height: 25px; }
+
+  .cms-viewport { position: fixed; inset: 0; overflow: hidden; }
+  .cms-frame {
+    position: absolute;
+    top: calc(var(--gg-warning-height) * -1);
+    left: 0;
+    width: 100%;
+    height: calc(100% + var(--gg-warning-height));
+    border: 0;
+    display: block;
+  }
+
+  /* Lớp phủ báo trạng thái - nằm ĐÈ LÊN và tự ẩn khi iframe tải xong thật. */
+  .cms-status {
+    position: fixed; inset: 0; z-index: 10;
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    padding: 24px; background: #eef1f8;
+  }
+  .cms-status.hidden { display: none; }
+  .cms-status h2 { font-size: 18px; margin: 0 0 8px; }
+  .cms-status p { font-size: 14px; color: #666; margin: 6px 0; line-height: 1.6; }
+  .cms-status a {
+    display: inline-block; margin-top: 14px; padding: 10px 18px; border-radius: 6px;
+    background: #0a2f77; color: #fff; text-decoration: none; font-weight: 600;
+  }
+  .spinner {
+    width: 32px; height: 32px; margin: 0 auto 16px;
+    border: 3px solid rgba(0,0,0,.1); border-top-color: #0a2f77; border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
 </head>
 <body>
-  <div class="cms-viewport" id="cmsViewport"></div>
 
-  <div class="cms-status" id="cmsStatus">
-    <div class="cms-spinner" aria-hidden="true"></div>
-    <p id="cmsStatusText">Đang tải trang quản trị…</p>
+<div class="cms-status" id="cms-status">
+  <div>
+    <div class="spinner" id="cms-spinner"></div>
+    <h2 id="cms-status-title">Đang mở trang quản trị...</h2>
+    <p id="cms-status-text">Nếu quá 12 giây vẫn chưa vào được, dùng nút bên dưới.</p>
+    <a id="cms-open-tab" href="#" rel="nofollow noreferrer" style="display:none">Mở ở tab riêng</a>
   </div>
+</div>
 
-  <script>
-    // Dán URL quản trị đã deploy vào đây (xem GAS.md mục XI).
-    var CMS_URL = "https://script.google.com/macros/s/AKfycbxPCSXahsjvkQ3sYYXDNWpk2MEGhiONTq2WPJstFrIYf7-PzZgPhDvxCt3ytll7hZeMZA/exec";
+<div class="cms-viewport">
+  <iframe class="cms-frame" id="cms-frame" title="Trang quản trị" referrerpolicy="no-referrer"></iframe>
+</div>
 
-    var status = document.getElementById("cmsStatus");
-    var statusText = document.getElementById("cmsStatusText");
-    var loaded = false;
+<script>
+  var CMS_URL = 'https://script.google.com/macros/s/AKfycbxPCSXahsjvkQ3sYYXDNWpk2MEGhiONTq2WPJstFrIYf7-PzZgPhDvxCt3ytll7hZeMZA/exec';
 
-    // BUG THẬT đã gặp (11/09/2026): <iframe> khai sẵn trong HTML KHÔNG có src sẽ tự bắn 1 sự
-    // kiện "load" cho tài liệu rỗng about:blank NGAY LÚC parser chèn nó vào DOM - trước khi
-    // script này kịp gán src thật. Script gắn listener rồi mới gán frame.src = CMS_URL vẫn ăn
-    // trúng sự kiện "load" rỗng đó (event được xếp hàng đợi, bắn ra ngay sau khi script đồng bộ
-    // chạy xong) => loaded bị set true SAI, bộ đếm 12 giây bị vô hiệu hoá ngay từ đầu, trong khi
-    // nội dung thật (URL tổ chức Google Workspace) vẫn đang treo "pending" phía sau - người dùng
-    // thấy y hệt "treo vĩnh viễn, không có lối thoát". Vá triệt để: tự TẠO iframe bằng JS và gán
-    // src TRƯỚC khi chèn vào DOM - không có bước "chèn rỗng rồi gán src sau" nên không có sự
-    // kiện "load" rỗng nào để ăn nhầm; sự kiện "load" đầu tiên (và duy nhất) chắc chắn ứng với
-    // CMS_URL thật.
-    var frame = document.createElement("iframe");
-    frame.className = "cms-frame";
-    frame.title = "Quản trị Top One VN";
-    frame.addEventListener("load", function () {
-      // Sự kiện "load" vẫn bắn dù nội dung khác origin (googleusercontent.com) - đủ để biết
-      // "đã tải xong", dù không đọc được bên trong.
-      loaded = true;
-      status.hidden = true;
-    });
-    frame.src = CMS_URL;
-    document.getElementById("cmsViewport").appendChild(frame);
+  var frame = document.getElementById('cms-frame');
+  var statusBox = document.getElementById('cms-status');
+  var loaded = false;
 
-    setTimeout(function () {
-      if (loaded) return;
-      // Treo quá lâu (thường do đang đăng nhập Google Workspace tổ chức, xem
-      // static-site-build.md mục 6a) — chỉ đường sang trang dự phòng.
-      statusText.innerHTML =
-        'Không tải được trang quản trị.<br />' +
-        '<a href="/admin-gas/">Mở bằng cách khác</a>';
-    }, 12000);
-  </script>
+  // Nút thoát hiểm trỏ về /admin-gas/ (đường lui, mở CMS theo cách cũ) - dễ nhớ hơn URL
+  // dài của Apps Script, và nếu sau này URL đó đổi thì chỉ phải sửa 1 chỗ ở /admin-gas/.
+  document.getElementById('cms-open-tab').href = '/admin-gas/';
+
+  // Sự kiện load của iframe VẪN bắn kể cả khi nội dung khác origin (chỉ là không đọc được
+  // bên trong) - đủ để phân biệt "đã tải được" với "treo".
+  frame.addEventListener('load', function () {
+    loaded = true;
+    statusBox.classList.add('hidden');
+    console.log('[admin] nhúng thành công');
+  });
+
+  // Treo quá lâu -> hiện lối thoát, không để người dùng nhìn màn hình trắng.
+  setTimeout(function () {
+    if (loaded) return;
+    console.warn('[admin] không nhúng được sau 12 giây - chuyển sang dùng /admin-gas/');
+    document.getElementById('cms-spinner').style.display = 'none';
+    document.getElementById('cms-status-title').textContent = 'Không nhúng được trang quản trị';
+    document.getElementById('cms-status-text').textContent =
+      'Trình duyệt này không cho hiển thị trang quản trị bên trong website. Bấm nút bên dưới để mở theo cách thường.';
+    document.getElementById('cms-open-tab').style.display = 'inline-block';
+  }, 12000);
+
+  frame.src = CMS_URL;
+</script>
 </body>
 </html>
