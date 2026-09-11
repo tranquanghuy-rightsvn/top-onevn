@@ -1,0 +1,7 @@
+.DS_Store
+
+# Code GAS (Code.js, index.html, app.html, css.html, js.html) deploy qua `clasp push`,
+# không qua git — xem GAS.md. Không track ở đây để không lộ logic phân quyền/cấu trúc
+# Sheet/cách publish lên repo (kể cả khi repo là public).
+gas/
+.clasp.json

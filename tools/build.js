@@ -1,40 +1,76 @@
 #!/usr/bin/env node
 /* Sinh toàn bộ trang con trong html/.  Chạy: node tools/build.js
-   Header/footer/nav lấy từ tools/layout.js nên chỉ sửa một chỗ là đồng bộ hết. */
+   Header/footer/nav lấy từ tools/layout.js nên chỉ sửa một chỗ là đồng bộ hết.
+   Nội dung dịch vụ + tin tức + danh mục đọc từ data/*.json (CMS ghi qua GitHub Contents
+   API) — xem GAS.md. Không còn require() content-services*.js/content-news.js. */
 
 const fs = require("fs");
 const path = require("path");
 const { SITE, SERVICES, esc, layout, crumbLd, BUSINESS_LD, GEO } = require("./layout");
 
 const ROOT = path.join(__dirname, "..", "html");
-/* Nội dung bài viết nằm ở content-services*.js, còn `short` (mô tả ngắn cho
-   dropdown + thẻ dịch vụ) nằm ở mảng SERVICES trong layout.js. Gộp hai nguồn
-   theo slug, và kiểm tra khớp để không lặp lại lỗi "undefined" trên /dich-vu/. */
-const SERVICE_CONTENT = [
-  ...require("./content-services"),
-  ...require("./content-services2"),
-];
+const DATA = path.join(__dirname, "..", "data");
 
-const bySlug = new Map(SERVICES.map((x) => [x.slug, x]));
+const readJson = (rel) => JSON.parse(fs.readFileSync(path.join(DATA, rel), "utf8"));
+
+/* ---------------- Dịch vụ: data/services.json là nguồn duy nhất ----------------
+   layout.js SERVICES chỉ còn vai trò "thứ tự + có tồn tại" cho dropdown/footer (CMS
+   không thêm/xoá dịch vụ) — title/short/img hiển thị luôn đồng bộ từ data/services.json
+   để tránh nav/footer hiện tên cũ sau khi sửa qua CMS. */
+const ALL_SERVICES = readJson("services.json");
+
+const svcBySlug = new Map(ALL_SERVICES.map((s) => [s.slug, s]));
 const missing = [];
-const ALL_SERVICES = SERVICE_CONTENT.map((c) => {
-  const meta = bySlug.get(c.slug);
-  if (!meta) missing.push(`  content-services*.js có slug "${c.slug}" nhưng layout.js SERVICES thì không`);
-  else if (!meta.short) missing.push(`  "${c.slug}" thiếu trường short trong layout.js`);
-  return { ...c, short: meta ? meta.short : "" };
-});
 for (const m of SERVICES) {
-  if (!SERVICE_CONTENT.some((c) => c.slug === m.slug))
-    missing.push(`  layout.js SERVICES có slug "${m.slug}" nhưng không có bài viết tương ứng`);
+  const d = svcBySlug.get(m.slug);
+  if (!d) {
+    missing.push(`  layout.js SERVICES có slug "${m.slug}" nhưng data/services.json thì không`);
+    continue;
+  }
+  m.title = d.title;
+  m.short = d.short;
+  m.img = d.img;
+}
+for (const s of ALL_SERVICES) {
+  if (!SERVICES.some((m) => m.slug === s.slug))
+    missing.push(`  data/services.json có slug "${s.slug}" nhưng layout.js SERVICES thì không`);
 }
 if (missing.length) {
   console.error("LỆCH DỮ LIỆU DỊCH VỤ:\n" + missing.join("\n"));
   process.exit(1);
 }
-const NEWS = require("./content-news");
+
+/* ---------------- Tin tức + danh mục ---------------- */
+const NEWS_CATEGORIES = readJson("news/categories.json");
+const catNameBySlug = new Map(NEWS_CATEGORIES.map((c) => [c.slug, c.name]));
+
+const formatDateVN = (iso) => {
+  const [y, m, d] = iso.split("-");
+  return `${d}/${m}/${y}`;
+};
+
+/* posts.json là index nhẹ; nội dung đầy đủ (content HTML, seoTitle) nằm ở
+   news/<slug>/post.json — gộp lại thành 1 mảng NEWS như quy ước cũ để phần
+   render bên dưới không phải đổi nhiều. */
+const NEWS = readJson("news/posts.json").map((idx) => {
+  const full = readJson(`news/${idx.slug}/post.json`);
+  const catName = catNameBySlug.get(full.cat);
+  if (!catName) throw new Error(`Bài "${full.slug}" dùng danh mục "${full.cat}" không tồn tại trong data/news/categories.json`);
+  return {
+    ...full,
+    catName,
+    dateText: formatDateVN(full.date),
+  };
+});
+NEWS.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+
 const { REASONS, STEPS, SERVICE_ICONS } = require("./content-home");
 
-const img = (n) => `/assets/images/${n}.webp`;
+/* Dữ liệu migrate ban đầu lưu tên KHÔNG đuôi (luôn .webp, tự thêm ở đây). Ảnh CMS upload
+   sau này lưu ĐẦY ĐỦ tên có đuôi (canvas.toDataURL('image/webp') có thể tự rơi về PNG nếu
+   trình duyệt không hỗ trợ encode webp — GAS.md mục II.5/III — nên không giả định trước đuôi
+   là gì, Code.js đã tự đọc đúng mime thật của ảnh rồi mới đặt tên file). */
+const img = (n) => (n.includes(".") ? `/assets/images/${n}` : `/assets/images/${n}.webp`);
 
 function write(rel, html) {
   const file = path.join(ROOT, rel, "index.html");
@@ -46,11 +82,7 @@ function write(rel, html) {
 
 /* Đếm chữ của phần nội dung bài (không tính header/footer) */
 function countBody(s) {
-  const t = [
-    s.lead,
-    ...s.sections.flatMap((x) => [x.h2, ...(x.p || []), ...(x.ul || []), x.after || ""]),
-    ...s.faq.flatMap((f) => [f.q, f.a]),
-  ].join(" ");
+  const t = [s.lead, s.content, ...s.faq.flatMap((f) => [f.q, f.a])].join(" ");
   return t.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
 }
 
@@ -141,14 +173,13 @@ function fillContainer(html, id, inner, key) {
 
 /* ---------------- Sidebar cho trang bài viết ----------------
    Dùng chung cho trang dịch vụ và trang tin tức. */
-const NEWS_CATS = (() => {
-  const m = new Map();
-  for (const n of NEWS) {
-    if (!m.has(n.cat)) m.set(n.cat, { slug: n.cat, name: n.catName, count: 0 });
-    m.get(n.cat).count++;
-  }
-  return [...m.values()];
-})();
+/* Danh mục là entity riêng (data/news/categories.json, CRUD qua CMS) — không suy ra từ
+   NEWS nữa, để danh mục chưa có bài vẫn hiện (và không "biến mất" khi bài cuối bị xoá). */
+const NEWS_CATS = NEWS_CATEGORIES.map((c) => ({
+  slug: c.slug,
+  name: c.name,
+  count: NEWS.filter((n) => n.cat === c.slug).length,
+}));
 
 function sidebar(opts) {
   const o = opts || {};
@@ -195,16 +226,8 @@ ${o.cta === false ? "" : `          <a class="side-cta" href="/cong-tac-vien/">
 
 /* ---------------- Trang chi tiết dịch vụ ---------------- */
 function servicePage(s) {
-  const body = s.sections
-    .map((sec) => {
-      const ps = (sec.p || []).map((x) => `          <p>${x}</p>`).join("\n");
-      const ul = sec.ul
-        ? `          <ul>\n${sec.ul.map((x) => `            <li>${x}</li>`).join("\n")}\n          </ul>`
-        : "";
-      const after = sec.after ? `          <p>${sec.after}</p>` : "";
-      return `          <h2>${sec.h2}</h2>\n${[ps, ul, after].filter(Boolean).join("\n")}`;
-    })
-    .join("\n\n");
+  /* s.content đã là HTML (h2/p/ul...) — soạn qua TinyMCE trong CMS, xem GAS.md mục II.1. */
+  const body = s.content;
 
   const others = ALL_SERVICES.filter((x) => x.slug !== s.slug)
     .slice(0, 3)
@@ -425,9 +448,8 @@ ${cards}
 }
 
 function newsPage(n) {
-  const body = n.body
-    .map((b) => (b.h2 ? `          <h2>${b.h2}</h2>` : `          <p>${b.p}</p>`))
-    .join("\n");
+  /* n.content đã là HTML — soạn qua TinyMCE trong CMS, xem GAS.md mục IV.1. */
+  const body = n.content;
 
   const more = NEWS.filter((x) => x.slug !== n.slug)
     .slice(0, 3)
@@ -835,6 +857,8 @@ function contactPage() {
 
           <form class="contact-form" id="contactForm" novalidate>
             <h2>Gửi yêu cầu báo giá</h2>
+            <input type="text" name="_hp" id="cf-hp" autocomplete="off" tabindex="-1"
+              style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" aria-hidden="true" />
             <div class="field">
               <label for="cf-name">Họ và tên <span aria-hidden="true">*</span></label>
               <input id="cf-name" name="name" type="text" required autocomplete="name" placeholder="Nguyễn Văn A" />
@@ -892,6 +916,25 @@ NEWS.forEach((n) => out.push(write(`tin-tuc/${n.slug}`, newsPage(n))));
 NEWS_CATS.forEach((c) => out.push(write(`tin-tuc/danh-muc/${c.slug}`, categoryPage(c))));
 out.push(write("cong-tac-vien", jobsPage()));
 out.push(write("lien-he", contactPage()));
+
+/* ---------------- Dọn thư mục mồ côi (bài viết/danh mục đã bị xoá qua CMS) ----------------
+   tin-tuc/ và tin-tuc/danh-muc/ là 2 nơi duy nhất có thể có bản ghi bị XOÁ qua CMS (dịch vụ cố
+   định, không xoá). Chỉ quét đúng 1 cấp trong 2 thư mục này, không đệ quy sâu hơn — tránh xoá
+   nhầm tài nguyên khác. Xem static-site-build.md mục 8 / gotcha #19. */
+function pruneOrphans(dir, keepSlugs, skipDirs) {
+  const abs = path.join(ROOT, dir);
+  if (!fs.existsSync(abs)) return;
+  const keep = new Set(keepSlugs);
+  for (const entry of fs.readdirSync(abs, { withFileTypes: true })) {
+    if (!entry.isDirectory()) continue;
+    if ((skipDirs || []).includes(entry.name)) continue;
+    if (keep.has(entry.name)) continue;
+    fs.rmSync(path.join(abs, entry.name), { recursive: true, force: true });
+    console.log(`  [dọn] xoá thư mục mồ côi ${dir}/${entry.name}/`);
+  }
+}
+pruneOrphans("tin-tuc", NEWS.map((n) => n.slug), ["danh-muc"]);
+pruneOrphans("tin-tuc/danh-muc", NEWS_CATS.map((c) => c.slug));
 
 /* ---------------- sitemap.xml + robots.txt ---------------- */
 const today = new Date().toISOString().slice(0, 10);

@@ -15,20 +15,25 @@ dưới 1000 từ, lệnh sẽ báo lỗi và thoát với mã 1.
 
 ## Sửa nội dung ở đâu
 
-| Muốn sửa | Sửa file |
+Kể từ khi có CMS (xem `GAS.md` ở gốc repo), **nội dung 6 dịch vụ + toàn bộ bài viết/danh mục
+tin tức sửa qua trang quản trị `/admin/` (Google Apps Script), không sửa tay JS nữa** — CMS ghi
+thẳng vào `data/services.json` + `data/news/*.json` qua GitHub Contents API, GitHub Actions tự
+chạy `node tools/build.js` và commit lại `html/`.
+
+| Muốn sửa | Sửa ở đâu |
 |---|---|
-| Menu, header, footer, thẻ SEO | `tools/layout.js` |
-| 3 bài dịch vụ đầu | `tools/content-services.js` |
-| 3 bài dịch vụ sau | `tools/content-services2.js` |
-| 4 bài tin tức | `tools/content-news.js` |
+| Nội dung/ảnh 6 dịch vụ, bài viết + danh mục tin tức, user CMS | Trang quản trị `/admin/` (không sửa tay `data/*.json`) |
+| Menu, header, footer, thẻ SEO, **thứ tự/danh sách 6 dịch vụ** | `tools/layout.js` (mảng `SERVICES` — chỉ còn giữ `slug`, không thêm/xoá qua CMS) |
 | Trang giới thiệu / cộng tác viên / liên hệ | `tools/build.js` (cuối file) |
 | 3 khối trên trang chủ (dịch vụ, lý do, quy trình) | `tools/content-home.js` |
 
-Thêm một dịch vụ mới: thêm mục vào mảng `SERVICES` trong `tools/layout.js`
-(cho dropdown) **và** thêm bài viết tương ứng vào một trong hai file
-`content-services*.js`. Hai nơi phải trùng `slug`.
+`data/services.json` luôn đúng 6 bản ghi, khớp `slug` với `tools/layout.js` (`build.js` tự kiểm
+tra khớp, thoát mã 1 nếu lệch) — **không thêm/xoá dịch vụ qua CMS**, muốn thêm dịch vụ thứ 7 phải
+sửa tay cả 2 nơi rồi chạy lại build (ngoài phạm vi CMS hiện tại).
 
-Sau khi sửa, chạy lại `node tools/build.js` rồi commit cả `tools/` lẫn `html/`.
+Sau khi sửa qua CMS: đợi ~1-2 phút (GitHub Actions build + Cloudflare Pages tự deploy). Sau khi
+sửa tay `tools/layout.js`/`tools/content-home.js`/`tools/build.js`: chạy lại `node tools/build.js`
+rồi commit cả `tools/` lẫn `html/` (và `data/` nếu có đổi) như trước.
 
 ## Lưu ý về form liên hệ
 
@@ -53,9 +58,11 @@ Muốn nhận thẳng vào hộp thư, chọn một trong hai:
 không cần ghi nguồn). CSS dùng `aspect-ratio: 3 / 2` nên ảnh mới thay vào
 phải giữ đúng tỉ lệ này, nếu không sẽ bị `object-fit: cover` cắt bớt.
 
-Thay ảnh: đặt file mới vào `html/assets/images/` rồi đổi trường `img`
-trong `tools/layout.js` (mảng `SERVICES`) và file nội dung tương ứng.
-Nhớ **đổi tên file** thay vì ghi đè — `/assets/*` đang cache 1 năm.
+Ảnh cover dịch vụ/tin tức giờ đổi qua CMS (`/admin/`) — CMS tự nén, đặt tên file mới có hậu tố
+version (không ghi đè, đúng convention cache 1 năm ở trên) và ghi thẳng vào
+`html/assets/images/`. Ảnh khác (logo, hero, trang giới thiệu...) vẫn sửa tay: đặt file mới vào
+`html/assets/images/` rồi đổi đường dẫn ở nơi dùng (`tools/layout.js`/`tools/build.js`), nhớ
+**đổi tên file** thay vì ghi đè.
 
 Riêng `hero.webp` (ảnh lớn trang chủ) giữ tỉ lệ khác vì nằm trong bố cục
 hero, không dùng khung 3:2.

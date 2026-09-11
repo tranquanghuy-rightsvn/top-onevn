@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quản trị | Top One VN</title>
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+  <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+  <meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+  <meta name="referrer" content="no-referrer" />
+  <style>
+    html, body { height: 100%; margin: 0; overflow: hidden; background: #0a2f77; }
+    :root { --gg-warning-height: 25px; } /* đo thật lúc build trang này; Google đổi giao diện thì sửa số này */
+
+    .cms-viewport { position: fixed; inset: 0; overflow: hidden; }
+    .cms-frame {
+      position: absolute; left: 0; border: 0; display: block;
+      top: calc(var(--gg-warning-height) * -1);
+      width: 100%; height: calc(100% + var(--gg-warning-height));
+      background: #fff;
+    }
+
+    .cms-status {
+      position: fixed; inset: 0; z-index: 10;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 16px; background: #0a2f77; color: #fff;
+      font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      text-align: center; padding: 24px; box-sizing: border-box;
+    }
+    .cms-status[hidden] { display: none; }
+    .cms-spinner {
+      width: 34px; height: 34px; border-radius: 50%;
+      border: 3px solid rgba(255, 255, 255, .25); border-top-color: #fff;
+      animation: cms-spin .8s linear infinite;
+    }
+    @keyframes cms-spin { to { transform: rotate(360deg); } }
+    .cms-status a { color: #fff; text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="cms-viewport">
+    <iframe class="cms-frame" id="cmsFrame" title="Quản trị Top One VN"></iframe>
+  </div>
+
+  <div class="cms-status" id="cmsStatus">
+    <div class="cms-spinner" aria-hidden="true"></div>
+    <p id="cmsStatusText">Đang tải trang quản trị…</p>
+  </div>
+
+  <script>
+    // Dán URL quản trị đã deploy vào đây (xem GAS.md mục XI).
+    var CMS_URL = "https://script.google.com/macros/s/AKfycbxPCSXahsjvkQ3sYYXDNWpk2MEGhiONTq2WPJstFrIYf7-PzZgPhDvxCt3ytll7hZeMZA/exec";
+
+    var frame = document.getElementById("cmsFrame");
+    var status = document.getElementById("cmsStatus");
+    var statusText = document.getElementById("cmsStatusText");
+    var loaded = false;
+
+    frame.addEventListener("load", function () {
+      // Sự kiện "load" vẫn bắn dù nội dung khác origin (googleusercontent.com).
+      loaded = true;
+      status.hidden = true;
+    });
+
+    setTimeout(function () {
+      if (loaded) return;
+      // Treo quá lâu (thường do đang đăng nhập Google Workspace tổ chức, xem
+      // static-site-build.md mục 6a) — chỉ đường sang trang dự phòng.
+      statusText.innerHTML =
+        'Không tải được trang quản trị.<br />' +
+        '<a href="/admin-gas/">Mở bằng cách khác</a>';
+    }, 12000);
+
+    frame.src = CMS_URL;
+  </script>
+</body>
+</html>

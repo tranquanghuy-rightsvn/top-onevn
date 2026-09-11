@@ -124,9 +124,13 @@ function initNavDropdown() {
 }
 
 /* ---------- Form liên hệ ----------
-   Trang tĩnh không có backend, nên form soạn sẵn email rồi mở ứng dụng mail.
-   Muốn nhận trực tiếp vào hộp thư thì cần gắn Formspree/Web3Forms hoặc
-   một Worker endpoint - xem ghi chú trong README. */
+   Gửi thẳng vào GAS CMS (doPost -> gửi mail tới NOTIFY_EMAIL, xem GAS.md mục VII) qua fetch().
+   Content-Type text/plain;charset=utf-8 là CỐ Ý (không phải application/json) - giữ request ở
+   dạng "simple request" để né CORS preflight (GAS không xử lý được OPTIONS). URL /exec không
+   phải bí mật (đã lộ công khai qua network request của chính form này), không cần giấu. */
+var CMS_EXEC_URL =
+  "https://script.google.com/macros/s/AKfycbxPCSXahsjvkQ3sYYXDNWpk2MEGhiONTq2WPJstFrIYf7-PzZgPhDvxCt3ytll7hZeMZA/exec";
+
 function initContactForm() {
   const form = document.getElementById("contactForm");
   if (!form) return;
@@ -145,6 +149,7 @@ function initContactForm() {
     const email = form.email.value.trim();
     const service = form.service.value;
     const message = form.message.value.trim();
+    const honeypot = form._hp ? form._hp.value : "";
 
     form.querySelectorAll(".has-error").forEach(function (el) {
       el.classList.remove("has-error");
@@ -163,26 +168,30 @@ function initContactForm() {
       return;
     }
 
-    const lines = [
-      "Họ tên: " + name,
-      "Điện thoại: " + phone,
-      email ? "Email: " + email : "",
-      service ? "Dịch vụ quan tâm: " + service : "",
-      "",
-      message || "(không có nội dung thêm)",
-    ].filter(Boolean);
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
+    setNote("Đang gửi yêu cầu...", "");
 
-    const subject = "Yêu cầu báo giá từ " + name;
-    window.location.href =
-      "mailto:cskhtoponevn@gmail.com?subject=" +
-      encodeURIComponent(subject) +
-      "&body=" +
-      encodeURIComponent(lines.join("\n"));
-
-    setNote(
-      "Đang mở ứng dụng email của bạn. Nếu không tự mở, vui lòng gọi 0979 726 873.",
-      "ok"
-    );
+    fetch(CMS_EXEC_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ name: name, phone: phone, email: email, service: service, message: message, _hp: honeypot }),
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (!data || !data.ok) throw new Error((data && data.error) || "Gửi yêu cầu thất bại");
+        form.reset();
+        setNote("Đã gửi yêu cầu! Chúng tôi sẽ liên hệ lại sớm nhất.", "ok");
+      })
+      .catch(function () {
+        setNote(
+          "Gửi yêu cầu chưa thành công, vui lòng gọi trực tiếp 0979 726 873.",
+          "error"
+        );
+      })
+      .finally(function () {
+        if (submitBtn) submitBtn.disabled = false;
+      });
   });
 }
 
