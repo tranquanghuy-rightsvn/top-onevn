@@ -180,6 +180,18 @@ X. Checklist bug đã thực sự gặp ở dự án này (cập nhật dần tr
      lookupSlug` để chặn. Không tái hiện được qua UI bình thường (client luôn giữ `slug ===
      origSlug` khi sửa) nhưng vi phạm đúng nguyên tắc "server không được tin việc ẩn/khoá input
      ở client là đủ" — sửa ở `Code.js` hàm `savePost`.
+   - **`html/admin/index.html` treo mãi ở "Đang tải trang quản trị…" dù đã có bộ đếm 12 giây tự
+     chuyển sang `/admin-gas/`** — phát hiện thật 11/09/2026 (tài khoản Google Workspace tổ chức
+     `mynavitechtus.com`, đúng kịch bản gotcha #25). Nguyên nhân: `<iframe>` khai sẵn trong HTML
+     KHÔNG có thuộc tính `src` tự bắn 1 sự kiện `load` cho tài liệu rỗng `about:blank` ngay lúc
+     trình duyệt parse xong thẻ đó — TRƯỚC khi script kịp gán `frame.src = CMS_URL`. Script gắn
+     listener xong mới gán src (đúng thứ tự tài liệu skill mô tả) vẫn ăn nhầm sự kiện rỗng đó
+     (event đã xếp hàng đợi, bắn ra ngay khi script đồng bộ chạy xong bất kể lúc đó src đã đổi
+     hay chưa) → `loaded` bị set `true` SAI ngay từ đầu → bộ đếm 12 giây bị vô hiệu hoá vĩnh
+     viễn, trong khi nội dung thật (URL `/a/macros/<domain>/...`) vẫn "pending" phía sau. Vá:
+     tự tạo `<iframe>` bằng `document.createElement` và gán `src` TRƯỚC khi `appendChild` vào
+     DOM — không còn bước "chèn thẻ rỗng rồi gán src sau" nên không có sự kiện `load` rỗng nào
+     để ăn nhầm nữa.
 
 XI. Script Properties (Project Settings > Script Properties trên script.google.com):
    - `GITHUB_TOKEN` — Fine-grained PAT, chỉ quyền Contents: Read and write, giới hạn đúng repo

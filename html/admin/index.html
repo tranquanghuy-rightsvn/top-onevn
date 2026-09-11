@@ -38,9 +38,7 @@
   </style>
 </head>
 <body>
-  <div class="cms-viewport">
-    <iframe class="cms-frame" id="cmsFrame" title="Quản trị Top One VN"></iframe>
-  </div>
+  <div class="cms-viewport" id="cmsViewport"></div>
 
   <div class="cms-status" id="cmsStatus">
     <div class="cms-spinner" aria-hidden="true"></div>
@@ -51,16 +49,31 @@
     // Dán URL quản trị đã deploy vào đây (xem GAS.md mục XI).
     var CMS_URL = "https://script.google.com/macros/s/AKfycbxPCSXahsjvkQ3sYYXDNWpk2MEGhiONTq2WPJstFrIYf7-PzZgPhDvxCt3ytll7hZeMZA/exec";
 
-    var frame = document.getElementById("cmsFrame");
     var status = document.getElementById("cmsStatus");
     var statusText = document.getElementById("cmsStatusText");
     var loaded = false;
 
+    // BUG THẬT đã gặp (11/09/2026): <iframe> khai sẵn trong HTML KHÔNG có src sẽ tự bắn 1 sự
+    // kiện "load" cho tài liệu rỗng about:blank NGAY LÚC parser chèn nó vào DOM - trước khi
+    // script này kịp gán src thật. Script gắn listener rồi mới gán frame.src = CMS_URL vẫn ăn
+    // trúng sự kiện "load" rỗng đó (event được xếp hàng đợi, bắn ra ngay sau khi script đồng bộ
+    // chạy xong) => loaded bị set true SAI, bộ đếm 12 giây bị vô hiệu hoá ngay từ đầu, trong khi
+    // nội dung thật (URL tổ chức Google Workspace) vẫn đang treo "pending" phía sau - người dùng
+    // thấy y hệt "treo vĩnh viễn, không có lối thoát". Vá triệt để: tự TẠO iframe bằng JS và gán
+    // src TRƯỚC khi chèn vào DOM - không có bước "chèn rỗng rồi gán src sau" nên không có sự
+    // kiện "load" rỗng nào để ăn nhầm; sự kiện "load" đầu tiên (và duy nhất) chắc chắn ứng với
+    // CMS_URL thật.
+    var frame = document.createElement("iframe");
+    frame.className = "cms-frame";
+    frame.title = "Quản trị Top One VN";
     frame.addEventListener("load", function () {
-      // Sự kiện "load" vẫn bắn dù nội dung khác origin (googleusercontent.com).
+      // Sự kiện "load" vẫn bắn dù nội dung khác origin (googleusercontent.com) - đủ để biết
+      // "đã tải xong", dù không đọc được bên trong.
       loaded = true;
       status.hidden = true;
     });
+    frame.src = CMS_URL;
+    document.getElementById("cmsViewport").appendChild(frame);
 
     setTimeout(function () {
       if (loaded) return;
@@ -70,8 +83,6 @@
         'Không tải được trang quản trị.<br />' +
         '<a href="/admin-gas/">Mở bằng cách khác</a>';
     }, 12000);
-
-    frame.src = CMS_URL;
   </script>
 </body>
 </html>
