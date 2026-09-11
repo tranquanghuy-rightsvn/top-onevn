@@ -15,9 +15,11 @@ I. Đối với tính năng đăng nhập:
   4. Phân quyền 3 cấp: `root` (chủ script, ẩn, ngầm định) > `admin` > `editor`.
      - `root`: toàn quyền, không quản lý được qua CMS (sửa tay Sheet nếu cần đổi ngoại lệ).
      - `admin`: làm mọi việc `editor` làm được, CỘNG THÊM tự thêm/sửa/xoá user cấp `admin` và
-       `editor` khác qua CMS (không được đụng dòng `root`).
+       `editor` khác qua CMS (không được đụng dòng `root`), CỘNG THÊM xem/quản lý tab "Quản lý
+       liên hệ" (mục VII).
      - `editor`: CRUD tin tức + danh mục tin tức + sửa nội dung dịch vụ. KHÔNG thấy tab "Quản lý
-       người dùng" trong CMS (ẩn ở UI) và server cũng tự chặn nếu gọi thẳng hàm quản lý user.
+       người dùng" và "Quản lý liên hệ" trong CMS (ẩn ở UI) và server cũng tự chặn nếu gọi thẳng
+       hàm quản lý user/liên hệ.
   5. OTP 6 số, sống 10 phút (CacheService), cooldown 60 giây giữa 2 lần xin liên tiếp cùng 1 email,
      tối đa 5 lần nhập sai rồi phải xin mã mới (đếm bằng CacheService, huỷ mã khi vượt ngưỡng — vá
      gotcha "chưa giới hạn số lần nhập sai" nêu ở gas-backend-patterns.md mục 1). Token phiên đăng
@@ -129,16 +131,36 @@ VII. Đối với form liên hệ công khai (`/lien-he/`) — chốt lại 11/0
    - Field: `name`, `phone` (bắt buộc), `email`, `service`, `message` (tuỳ chọn) + `_hp`
      (honeypot, input ẩn bằng `style` inline ngay trên thẻ — CỐ Ý không dùng class CSS ở file
      riêng, tránh đúng bẫy "rule CSS ẩn honeypot bị mất khi merge" — gotcha #27).
-   - `_hp` có giá trị → server âm thầm trả `{ok:true}`, KHÔNG gửi mail, không báo lỗi.
+   - `_hp` có giá trị → server âm thầm trả `{ok:true}`, KHÔNG lưu, KHÔNG gửi mail, không báo lỗi.
    - Rate-limit: 20 giây/lần theo số điện thoại (`CacheService`).
-   - **KHÔNG lưu vào Sheet** (khác dự án tham khảo xevip có tab "Liên hệ" trong Admin — dự án
-     này chỉ yêu cầu gửi email, không yêu cầu quản lý danh sách liên hệ qua CMS). Hệ quả: gửi
-     mail thất bại (chưa cấu hình `NOTIFY_EMAIL`, hoặc `MailApp` lỗi) → trả lỗi THẬT cho khách
-     (không có nơi lưu dự phòng nào khác) — khác xevip (lưu Sheet trước, mail là best-effort).
-   - Thông báo: gửi email qua `MailApp` tới Script Property `NOTIFY_EMAIL` — **bắt buộc**, không
-     có địa chỉ mặc định hard-code trong code (xem mục XI). Dùng CHUNG quota Gmail 100 mail/ngày
-     với OTP đăng nhập — nếu lượng liên hệ tăng cao chạm mốc đó, cân nhắc tách account Gmail
-     riêng cho OTP (xem hosting-and-quotas.md).
+   - **CÓ lưu vào Sheet `Contacts`** — chốt lại LẦN 2 (11/09/2026, cùng ngày, đổi tiếp quyết định
+     "KHÔNG lưu Sheet" ở trên vì phát sinh yêu cầu tab "Quản lý liên hệ") — cột:
+     `id, createdAt, name, phone, email, service, message, status` (`status`: `"Mới"` |
+     `"Đã xử lý"`, mặc định `"Mới"`). Sheet tự tạo LƯỜI (lazy, lúc lần đầu có người submit hoặc
+     mở tab quản lý — không tạo sẵn lúc bootstrap Spreadsheet như `Users`, vì tính năng thêm sau
+     khi Spreadsheet nhiều dự án đã tồn tại).
+   - **Ghi Sheet LÀ NGUỒN CHÍNH, gửi mail là BEST-EFFORT sau đó** (khác quyết định lần 1 ở trên —
+     giờ đã có nơi lưu dự phòng nên không cần trả lỗi thật cho khách nữa): ghi Sheet xong luôn
+     trả `{ok:true}`; `MailApp.sendEmail` lỗi (chưa cấu hình `NOTIFY_EMAIL`, quota Gmail...) chỉ
+     `Logger.log`, KHÔNG throw — khớp đúng cách xevip làm.
+   - **Quản lý trong Admin** (tab "Quản lý liên hệ", xem thanh điều hướng ở mục VIII) — CHỈ
+     `admin`/`root` (giống mục I.4 quản lý người dùng): xem danh sách (mới nhất lên đầu), đổi
+     trạng thái Mới ⇄ Đã xử lý, xoá. `editor` không thấy tab này (ẩn client + chặn server).
+     Danh sách KHÔNG nằm trong `boot()` (giống `users`, xem mục IX) — tải riêng lúc mở tab.
+   - **Email thông báo dùng template HTML riêng** (`gas/email.html`, render qua
+     `HtmlService.createTemplateFromFile` + scriptlet `<?= ?>` — BẮT BUỘC dùng bản escaped `<?=
+     ?>`, không dùng `<?!= ?>`, vì mọi field đều là dữ liệu công khai chưa xác thực, tránh HTML/
+     script injection vào email nếu ai đó cố tình điền thẻ HTML vào form): logo Top One VN
+     (`https://toponevn.vn/assets/images/logo.webp`, URL tuyệt đối — ảnh email luôn cần domain
+     thật), các trường liên hệ trình bày dạng thẻ/card có CSS (inline + `<style>` trong head,
+     Gmail hỗ trợ tốt — đây là kênh nhận mail chính), nút "Gọi lại cho khách" (`tel:`). Tiêu đề
+     cố định: `[ToponeVN] Liên hệ mới`. `MailApp.sendEmail` truyền cả `body` (thuần văn, fallback
+     cho ứng dụng mail không đọc được HTML) lẫn `htmlBody`.
+   - Thông báo: gửi email qua `MailApp` tới Script Property `NOTIFY_EMAIL` — **bắt buộc để CÓ
+     thông báo** (không có mail nếu thiếu, nhưng liên hệ vẫn lưu Sheet bình thường — xem trên),
+     không có địa chỉ mặc định hard-code trong code (xem mục XI). Dùng CHUNG quota Gmail 100
+     mail/ngày với OTP đăng nhập — nếu lượng liên hệ tăng cao chạm mốc đó, cân nhắc tách account
+     Gmail riêng cho OTP (xem hosting-and-quotas.md).
    - Không có form đặt hàng/đặt lịch (mục VI của template gốc — không áp dụng cho dự án này).
 
 VIII. Một số lưu ý UX chung (áp dụng cho MỌI thao tác Lưu/Xoá/Đổi trạng thái trong Admin):
@@ -157,7 +179,11 @@ VIII. Một số lưu ý UX chung (áp dụng cho MỌI thao tác Lưu/Xoá/Đ�
 
 IX. Kiến trúc lưu trữ (nơi gì nằm ở đâu, ai đọc/ghi):
    - Google Sheet `TopOneVN CMS Data` (tự tạo lần đầu chạy, ID lưu vào Script Property
-     `SPREADSHEET_ID`) — 1 sheet `Users`, cột: `email`, `role` (`admin` | `editor`).
+     `SPREADSHEET_ID`) — 2 sheet:
+     - `Users` — cột: `email`, `role` (`admin` | `editor`).
+     - `Contacts` — cột: `id`, `createdAt`, `name`, `phone`, `email`, `service`, `message`,
+       `status` (`"Mới"` | `"Đã xử lý"`). Tự tạo LƯỜI (lazy) lúc lần đầu cần tới (form submit
+       hoặc mở tab quản lý), không tạo sẵn lúc bootstrap Spreadsheet như `Users` — xem mục VII.
    - GitHub (qua Contents API, repo `tranquanghuy-rightsvn/top-onevn`, nhánh `master`) — đường dẫn
      cố định:
      - `data/services.json` — mảng 6 bản ghi dịch vụ (field liệt kê ở mục II.1-3).
