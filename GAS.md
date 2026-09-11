@@ -151,11 +151,19 @@ VII. Đối với form liên hệ công khai (`/lien-he/`) — chốt lại 11/0
      `HtmlService.createTemplateFromFile` + scriptlet `<?= ?>` — BẮT BUỘC dùng bản escaped `<?=
      ?>`, không dùng `<?!= ?>`, vì mọi field đều là dữ liệu công khai chưa xác thực, tránh HTML/
      script injection vào email nếu ai đó cố tình điền thẻ HTML vào form): logo Top One VN
-     (`https://toponevn.vn/assets/images/logo.webp`, URL tuyệt đối — ảnh email luôn cần domain
-     thật), các trường liên hệ trình bày dạng thẻ/card có CSS (inline + `<style>` trong head,
-     Gmail hỗ trợ tốt — đây là kênh nhận mail chính), nút "Gọi lại cho khách" (`tel:`). Tiêu đề
-     cố định: `[ToponeVN] Liên hệ mới`. `MailApp.sendEmail` truyền cả `body` (thuần văn, fallback
-     cho ứng dụng mail không đọc được HTML) lẫn `htmlBody`.
+     (`https://toponevn.vn/assets/images/logo-email.png`, URL tuyệt đối — ảnh email luôn cần
+     domain thật). **Dùng bản `.png` riêng cho email, KHÔNG dùng `logo.webp` của site** (chốt lại
+     11/09/2026, sau khi logo hiện xấu/vỡ) — nhiều ứng dụng mail (Outlook desktop cũ...) không
+     hiển thị được webp; ảnh nằm ở `html/assets/images/logo-email.png` (nén từ
+     `source-images/logo.png` bằng `sips`, 200×128px, ~30KB), có `width`/`height` cố định trên
+     thẻ `<img>` (không chỉ CSS) để hiển thị đúng kể cả khi ứng dụng mail cắt bớt `<style>`. Khối
+     logo trình bày ĐÚNG như header thật của site (`tools/layout.js`/`html/styles/style.css`
+     `.brand`/`.brand-name`/`.brand-tag`: icon + chữ "Top One VN" navy `#06276b`/cam `#ef4a13`
+     trên nền trắng, dùng `<table>` cho hàng logo+chữ để tương thích Outlook) — không tự bịa bố
+     cục/màu khác cho email. Các trường liên hệ trình bày dạng thẻ/card có CSS (inline + `<style>`
+     trong head, Gmail hỗ trợ tốt — đây là kênh nhận mail chính), nút "Gọi lại cho khách" (`tel:`).
+     Tiêu đề cố định: `[ToponeVN] Liên hệ mới`. `MailApp.sendEmail` truyền cả `body` (thuần văn,
+     fallback cho ứng dụng mail không đọc được HTML) lẫn `htmlBody`.
    - Thông báo: gửi email qua `MailApp` tới Script Property `NOTIFY_EMAIL` — **bắt buộc để CÓ
      thông báo** (không có mail nếu thiếu, nhưng liên hệ vẫn lưu Sheet bình thường — xem trên),
      không có địa chỉ mặc định hard-code trong code (xem mục XI). Dùng CHUNG quota Gmail 100
