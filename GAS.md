@@ -37,6 +37,17 @@ II. Đối với "dịch vụ" (6 trang /dich-vu/<slug>/ có sẵn, KHÔNG thêm
      - Nội dung chính (`content`) — 1 ô TinyMCE duy nhất, xuất HTML (h2/p/ul/strong...), in thẳng
        vào khung `.prose` của trang chi tiết (KHÔNG bao gồm `lead` — 2 field riêng, giữ đúng cách
        hiển thị hiện tại: `lead` nổi bật, `content` là phần thân bài). KHÔNG có ô nhập FAQ — mục II.3.
+       Có nút "Chèn ảnh" trên toolbar (chèn nhanh, không qua dialog mặc định của TinyMCE — xem
+       gas-backend-patterns.md mục 4): mở thẳng file picker, chèn ảnh tạm ngay (xem được liền),
+       upload chạy ngầm rồi tự đổi `src` sang URL thật `/assets/images/<file>` (đường dẫn TUYỆT
+       ĐỐI — build.js không viết lại `src` trong content, xem gas-backend-patterns.md mục 11).
+       Dùng lại đúng hàm `uploadServiceImage`/`uploadPostImage` (không có hàm upload ảnh nội
+       dung riêng). **Không có** figure/caption/alt tự động như dự án xevip (ngoài phạm vi yêu
+       cầu ban đầu — `alt` ảnh chèn nhanh để trống, sửa tay trong HTML nếu cần). **Không hỗ trợ
+       dán/kéo-thả ảnh trực tiếp** (`paste_data_images` cố ý để mặc định `false`) — chỉ chèn qua
+       nút "Chèn ảnh", tránh lưu nhầm base64 khổng lồ vào `data/*.json` nếu dán ảnh ngoài luồng
+       upload. `saveService`/`savePost` tự đợi mọi ảnh chèn nhanh upload xong trước khi đọc
+       `getContent()` để lưu (tránh lưu nhầm `data:` URL tạm nếu bấm Lưu ngay sau khi vừa chèn).
      - Slug: HIỂN THỊ nhưng khoá cứng (disabled), không có cách nào đổi qua CMS ở dự án này (khác
        các dự án khác trong playbook: ở đây server còn từ chối cả thao tác thêm-mới/xoá — chỉ có
        đúng 1 hàm `saveService` update-only trên 1 trong 6 slug đã tồn tại sẵn).
@@ -84,7 +95,8 @@ IV. Đối với "tin tức" (bài viết) — full CRUD:
      - Ngày đăng (`date`) — mặc định hôm nay lúc tạo mới, sửa được tự do (không bất biến).
      - Ảnh cover (`img`) — upload, cơ chế giống mục II.5/III.
      - Mô tả ngắn/excerpt (`excerpt`) — hiện ở thẻ tin tức, trang danh sách, `<meta description>`.
-     - Nội dung (`content`) — 1 ô TinyMCE, xuất HTML, in thẳng vào `.prose`.
+     - Nội dung (`content`) — 1 ô TinyMCE, xuất HTML, in thẳng vào `.prose`. Có nút "Chèn ảnh"
+       nhanh giống mục II.1 (dùng `uploadPostImage`).
   2. Field KHÔNG có ô nhập — server tự suy: `dateText` (build script tự format từ `date` lúc
      render, không lưu riêng trong `data/`), `catName` (build script tự tra từ `categories.json`
      theo `cat`, KHÔNG lưu trùng lặp trong post — tránh lệch khi đổi tên danh mục).
